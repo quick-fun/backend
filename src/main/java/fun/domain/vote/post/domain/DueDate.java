@@ -11,14 +11,21 @@ import java.util.Objects;
 @Embeddable
 public class DueDate {
 
-    @Column(name = "due_date")
+    @Column(name = "due_date", nullable = false)
     private LocalDateTime dueDate;
 
     protected DueDate() {
     }
 
     public DueDate(final LocalDateTime dueDate) {
+        validateIsFuture(dueDate);
         this.dueDate = dueDate;
+    }
+
+    private void validateIsFuture(final LocalDateTime dueDate) {
+        if (dueDate.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("마감 기한은 현재보다 과거일 수 없습니다.");
+        }
     }
 
     @Override
