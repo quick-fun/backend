@@ -1,6 +1,6 @@
-package fun.config.converter;
+package fun.config;
 
-import fun.domain.auth.converter.AuthSocialTypeConverter;
+import fun.domain.auth.config.converter.AuthSocialTypeConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
