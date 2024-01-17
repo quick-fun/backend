@@ -1,5 +1,6 @@
 package fun.testconfig;
 
+import fun.domain.auth.domain.AuthMemberRepository;
 import fun.domain.member.domain.MemberCommandRepository;
 import fun.domain.vote.label.domain.VoteLabelCommandRepository;
 import fun.domain.vote.post.domain.VotePostCommandRepository;
@@ -21,4 +22,7 @@ public abstract class ServiceTestConfig extends DomainValidatorTestConfig {
 
     @Autowired
     protected VoteTagCommandRepository voteTagCommandRepository;
+
+    @Autowired
+    protected AuthMemberRepository authMemberRepository;
 }
