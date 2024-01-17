@@ -1,16 +1,14 @@
 package fun.scenario.spec;
 
-public enum ApiUrl {
+public final class ApiUrl {
 
-    POST_VOTE_POST_CREATE("/api/v1/posts");
-
-    private final String url;
-
-    ApiUrl(final String url) {
-        this.url = url;
+    private ApiUrl() {
     }
 
-    public String getUrl() {
-        return url;
-    }
+    /** VOTE_POST **/
+    public static final String POST_VOTE_POST_CREATE = "/api/v1/posts";
+
+    /** AUTHENTICATION **/
+    public static final String GET_AUTHENTICATION_SOCIAL = "/api/v1/login/auth/{socialType}";
+    public static final String POST_JOIN_SOCIAL_MEMBER = "/api/v1/login/{socialType}";
 }
