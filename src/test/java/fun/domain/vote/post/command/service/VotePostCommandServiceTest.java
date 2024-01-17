@@ -1,6 +1,6 @@
 package fun.domain.vote.post.command.service;
 
-import fun.domain.auth.domain.MemberId;
+import fun.common.auth.AuthAccessToken;
 import fun.domain.member.domain.Member;
 import fun.domain.vote.post.domain.VotePost;
 import fun.domain.vote.post.domain.Tag;
@@ -49,7 +49,7 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
         );
 
         // when
-        final MemberId memberId = new MemberId(savedMember.getId());
+        final AuthAccessToken authAccessToken = new AuthAccessToken(savedMember.getId());
         final CreateVotePostRequest createVotePostRequest = new CreateVotePostRequest(
                 "투표 게시글 제목",
                 "투표 게시글 내용",
@@ -57,7 +57,7 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
                 LocalDateTime.now().plusHours(24)
         );
         final Long savedVotePostId = votePostCommandService.createVotePost(
-                memberId,
+                authAccessToken,
                 createVotePostRequest
         );
 
@@ -84,7 +84,7 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
         );
 
         // when
-        final MemberId wrongMemberId = new MemberId(0L);
+        final AuthAccessToken wrongAuthAccessToken = new AuthAccessToken(0L);
         final CreateVotePostRequest createVotePostRequest = new CreateVotePostRequest(
                 "투표 게시글 제목",
                 "투표 게시글 내용",
@@ -95,7 +95,7 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
         // then
         assertThatThrownBy(() ->
                 votePostCommandService.createVotePost(
-                        wrongMemberId,
+                        wrongAuthAccessToken,
                         createVotePostRequest
                 )
         ).isInstanceOf(IllegalStateException.class);

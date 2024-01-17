@@ -1,6 +1,6 @@
 package fun.domain.vote.post.service.command;
 
-import fun.domain.auth.domain.MemberId;
+import fun.common.auth.AuthAccessToken;
 import fun.domain.vote.post.domain.DueDate;
 import fun.domain.vote.post.domain.VoteAssignHostValidator;
 import fun.domain.vote.post.domain.VotePost;
@@ -23,7 +23,7 @@ public class VotePostCommandService {
     private final VoteTagCommandRepository voteTagCommandRepository;
     private final VoteAssignHostValidator voteAssignHostValidator;
 
-    public Long createVotePost(final MemberId memberId, final CreateVotePostRequest votePostRequest) {
+    public Long createVotePost(final AuthAccessToken authAccessToken, final CreateVotePostRequest votePostRequest) {
         final VoteTag findVoteTag = voteTagCommandRepository.getVoteTagById(votePostRequest.tagId());
         final DueDate dueDate = new DueDate(votePostRequest.localDateTime());
 
@@ -34,7 +34,7 @@ public class VotePostCommandService {
                 findVoteTag,
                 Collections.emptyList()
         );
-        newVotePost.assignHost(memberId.getValue(), voteAssignHostValidator);
+        newVotePost.assignHost(authAccessToken.memberId(), voteAssignHostValidator);
 
         return votePostCommandRepository.save(newVotePost).getId();
     }
