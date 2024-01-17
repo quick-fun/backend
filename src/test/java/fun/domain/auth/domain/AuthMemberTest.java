@@ -20,20 +20,20 @@ class AuthMemberTest {
         refreshTokenSigner = new RefreshTokenSignerStub();
     }
 
-    @DisplayName("[SUCCESS] 액세스 토큰을 발행한다.")
+    @DisplayName("[SUCCESS] 액세스 토큰을 서명한다.")
     @Test
-    void success_publishAccessToken() {
+    void success_signAccessToken() {
         // given
         final AuthMember authMember = new AuthMember(
                 1L,
                 new SocialAccessToken(UUID.randomUUID().toString()),
                 RefreshToken.publishRefreshToken(),
                 Mockito.mock(AuthSocialType.class),
-                new MemberId(1L)
+                1L
         );
 
         // when
-        final String actual = authMember.publishAccessToken(accessTokenSigner);
+        final String actual = authMember.signAccessToken(accessTokenSigner);
 
         // then
         assertThat(actual)
@@ -41,24 +41,43 @@ class AuthMemberTest {
                 .isNotBlank();
     }
 
+    @DisplayName("[SUCCESS] 리프레시 토큰을 서명한다.")
+    @Test
+    void success_signRefreshToken() {
+        // given
+        final RefreshToken expected = RefreshToken.publishRefreshToken();
+        final AuthMember authMember = new AuthMember(
+                1L,
+                new SocialAccessToken(UUID.randomUUID().toString()),
+                expected,
+                Mockito.mock(AuthSocialType.class),
+                1L
+        );
+
+        // when
+        final String actual = authMember.signRefreshToken(refreshTokenSigner);
+
+        // then
+        assertThat(actual).isNotEqualTo(expected.getValue());
+    }
+
     @DisplayName("[SUCCESS] 리프레시 토큰을 발행한다.")
     @Test
     void success_publishRefreshToken() {
         // given
-        final AuthMember authMember = new AuthMember(
+        final RefreshToken expected = RefreshToken.publishRefreshToken();
+        final AuthMember actual = new AuthMember(
                 1L,
                 new SocialAccessToken(UUID.randomUUID().toString()),
-                RefreshToken.publishRefreshToken(),
+                expected,
                 Mockito.mock(AuthSocialType.class),
-                new MemberId(1L)
+                1L
         );
 
         // when
-        final String actual = authMember.publishRefreshToken(refreshTokenSigner);
+        actual.publishRefreshToken(expected);
 
         // then
-        assertThat(actual)
-                .isNotNull()
-                .isNotBlank();
+        assertThat(actual.getRefreshToken()).isNotEqualTo(expected);
     }
 }

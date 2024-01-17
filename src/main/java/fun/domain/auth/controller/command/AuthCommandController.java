@@ -1,6 +1,9 @@
 package fun.domain.auth.controller.command;
 
+import fun.common.auth.AuthRefreshToken;
+import fun.domain.auth.config.argument.AuthRefreshPrinciple;
 import fun.domain.auth.domain.AuthSocialType;
+import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.service.command.AuthCommandService;
 import fun.domain.auth.service.command.response.TokenResponse;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,10 +34,12 @@ public class AuthCommandController {
 
     @PutMapping
     ResponseEntity<TokenResponse> recreateTokens(
-            @RequestHeader(name = "RefreshToken") final String signedRefreshToken
+            @AuthRefreshPrinciple final AuthRefreshToken authRefreshToken
     ) {
         return ResponseEntity.ok(
-                authCommandService.recreateTokens(signedRefreshToken)
+                authCommandService.recreateTokens(
+                        new RefreshToken(authRefreshToken.refreshToken())
+                )
         );
     }
 }

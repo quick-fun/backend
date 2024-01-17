@@ -33,8 +33,8 @@ public class AuthMember {
     @Column(name = "auth_social_type", nullable = false)
     private AuthSocialType authSocialType;
 
-    @Embedded
-    private MemberId memberId;
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
     protected AuthMember() {
     }
@@ -44,7 +44,7 @@ public class AuthMember {
             final SocialAccessToken socialAccessToken,
             final RefreshToken refreshToken,
             final AuthSocialType authSocialType,
-            final MemberId memberId
+            final Long memberId
     ) {
         this(null, authId, socialAccessToken, refreshToken, authSocialType, memberId);
     }
@@ -55,7 +55,7 @@ public class AuthMember {
             final SocialAccessToken socialAccessToken,
             final RefreshToken refreshToken,
             final AuthSocialType authSocialType,
-            final MemberId memberId
+            final Long memberId
     ) {
         this.id = id;
         this.authId = authId;
@@ -65,13 +65,20 @@ public class AuthMember {
         this.memberId = memberId;
     }
 
-    public String publishAccessToken(final AccessTokenSigner accessTokenSigner) {
+    public String signAccessToken(final AccessTokenSigner accessTokenSigner) {
         return accessTokenSigner.sign(this.memberId);
     }
 
-    public String publishRefreshToken(final RefreshTokenSigner refreshTokenSigner) {
-        this.refreshToken = RefreshToken.publishRefreshToken();
+    public String signRefreshToken(final RefreshTokenSigner refreshTokenSigner) {
         return this.refreshToken.sign(refreshTokenSigner);
+    }
+
+    public void publishRefreshToken(final RefreshToken verifiedRefreshToken) {
+        if (this.refreshToken.isNotSame(verifiedRefreshToken)) {
+            throw new IllegalArgumentException("인증용 사용자의 리프래시 토큰을 새로 발급하기 위해서는 이전에 발급된 리프래시 토큰값이 필요합니다.");
+        }
+
+        this.refreshToken = RefreshToken.publishRefreshToken();
     }
 
     @Override

@@ -2,8 +2,8 @@ package fun.domain.auth.service.command;
 
 import fun.domain.auth.domain.AccessTokenSignerStub;
 import fun.domain.auth.domain.AuthSocialType;
+import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.domain.RefreshTokenSignerStub;
-import fun.domain.auth.domain.RefreshTokenVerifierStub;
 import fun.domain.auth.service.command.response.TokenResponse;
 import fun.domain.auth.service.command.token.SocialAccessTokenProviderCompositeStub;
 import fun.testconfig.ServiceTestConfig;
@@ -23,7 +23,6 @@ class AuthCommandServiceTest extends ServiceTestConfig {
                 new SocialAccessTokenProviderCompositeStub(),
                 new AccessTokenSignerStub(),
                 new RefreshTokenSignerStub(),
-                new RefreshTokenVerifierStub(),
                 authMemberRepository,
                 memberCommandRepository
         );
@@ -55,7 +54,9 @@ class AuthCommandServiceTest extends ServiceTestConfig {
         );
 
         // when
-        final TokenResponse actual = authCommandService.recreateTokens(oldTokens.refreshToken());
+        final TokenResponse actual = authCommandService.recreateTokens(
+                new RefreshToken(oldTokens.refreshToken())
+        );
 
         // expect
         assertSoftly(softly -> {

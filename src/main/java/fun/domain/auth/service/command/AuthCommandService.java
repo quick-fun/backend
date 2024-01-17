@@ -1,11 +1,9 @@
 package fun.domain.auth.service.command;
 
-import fun.domain.auth.config.filter.RefreshTokenVerifier;
 import fun.domain.auth.domain.AccessTokenSigner;
 import fun.domain.auth.domain.AuthMember;
 import fun.domain.auth.domain.AuthMemberRepository;
 import fun.domain.auth.domain.AuthSocialType;
-import fun.domain.auth.domain.MemberId;
 import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.domain.RefreshTokenSigner;
 import fun.domain.auth.domain.SocialAccessToken;
@@ -29,7 +27,6 @@ public class AuthCommandService {
     private final SocialAccessTokenProviderComposite socialAccessTokenProviderComposite;
     private final AccessTokenSigner accessTokenSigner;
     private final RefreshTokenSigner refreshTokenSigner;
-    private final RefreshTokenVerifier refreshTokenVerifier;
     private final AuthMemberRepository authMemberRepository;
     private final MemberCommandRepository memberCommandRepository;
 
@@ -61,7 +58,7 @@ public class AuthCommandService {
         final Long authId = socialProfileDto.id();
         final SocialAccessToken socialAccessToken = socialAccessTokenDto.toSocialAccessToken();
         final RefreshToken refreshToken = RefreshToken.publishRefreshToken();
-        final MemberId memberId = new MemberId(savedMember.getId());
+        final Long memberId = savedMember.getId();
 
         return authMemberRepository.save(
                 new AuthMember(
@@ -76,16 +73,16 @@ public class AuthCommandService {
 
     private TokenResponse createTokenResponse(final AuthMember findAuthMember) {
         return new TokenResponse(
-                findAuthMember.publishAccessToken(accessTokenSigner),
-                findAuthMember.publishRefreshToken(refreshTokenSigner)
+                findAuthMember.signAccessToken(accessTokenSigner),
+                findAuthMember.signRefreshToken(refreshTokenSigner)
         );
     }
 
-    public TokenResponse recreateTokens(final String signedRefreshToken) {
-        final RefreshToken verifiedRefreshToken = refreshTokenVerifier.verify(signedRefreshToken);
-        return createTokenResponse(
-                getAuthMemberOrThrowException(verifiedRefreshToken)
-        );
+    public TokenResponse recreateTokens(final RefreshToken requestRefreshToken) {
+        final AuthMember findAuthMember = getAuthMemberOrThrowException(requestRefreshToken);
+        findAuthMember.publishRefreshToken(requestRefreshToken);
+
+        return createTokenResponse(findAuthMember);
     }
 
     private AuthMember getAuthMemberOrThrowException(final RefreshToken refreshToken) {

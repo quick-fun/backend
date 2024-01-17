@@ -1,6 +1,6 @@
 package fun.testconfig;
 
-import fun.domain.auth.config.filter.AuthFilter;
+import fun.domain.auth.config.filter.AuthAccessFilter;
 import fun.domain.auth.controller.command.AuthCommandController;
 import fun.domain.auth.controller.query.AuthQueryController;
 import fun.domain.auth.service.command.AuthCommandService;
@@ -88,8 +88,8 @@ class RestDocsConfig {
 class FilterTestConfig {
 
     @Bean
-    AuthFilter authFilter() throws ServletException, IOException {
-        final AuthFilter mock = Mockito.mock(AuthFilter.class);
+    AuthAccessFilter authFilter() throws ServletException, IOException {
+        final AuthAccessFilter mock = Mockito.mock(AuthAccessFilter.class);
         doNothing().when(mock).doFilter(any(), any(), any());
 
         return mock;

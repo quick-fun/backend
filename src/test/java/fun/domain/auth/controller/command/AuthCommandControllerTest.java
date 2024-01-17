@@ -1,6 +1,7 @@
 package fun.domain.auth.controller.command;
 
 import fun.domain.auth.domain.AuthSocialType;
+import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.service.command.response.TokenResponse;
 import fun.testconfig.ControllerTestConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +67,7 @@ class AuthCommandControllerTest extends ControllerTestConfig {
     void success_recreateTokens() throws Exception {
         // when
         when(
-                authCommandService.recreateTokens(anyString())
+                authCommandService.recreateTokens(any(RefreshToken.class))
         ).thenReturn(
                 new TokenResponse("newSignedAccessToken", "newSignedRefreshToken")
         );

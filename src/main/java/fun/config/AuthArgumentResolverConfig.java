@@ -1,6 +1,6 @@
 package fun.config;
 
-import fun.domain.auth.config.argument.AuthArgumentResolver;
+import fun.domain.auth.config.argument.AuthAccessArgumentResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -17,7 +17,7 @@ public class AuthArgumentResolverConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    AuthArgumentResolver authArgumentResolver() {
-        return new AuthArgumentResolver();
+    AuthAccessArgumentResolver authArgumentResolver() {
+        return new AuthAccessArgumentResolver();
     }
 }
