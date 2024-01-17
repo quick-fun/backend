@@ -1,5 +1,6 @@
 package fun.domain.auth.config.filter;
 
+import fun.domain.auth.domain.RefreshToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,13 +11,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static fun.common.auth.AuthRefreshToken.AUTHORIZATION_REFRESH_TOKEN;
 
 @RequiredArgsConstructor
 @Component
-public class AuthFilter extends OncePerRequestFilter {
+public class AuthRefreshFilter extends OncePerRequestFilter {
 
-    private final AccessTokenVerifier accessTokenVerifier;
+    private final RefreshTokenVerifier refreshTokenVerifier;
 
     @Override
     protected void doFilterInternal(
@@ -24,12 +25,11 @@ public class AuthFilter extends OncePerRequestFilter {
             final HttpServletResponse response,
             final FilterChain filterChain
     ) throws ServletException, IOException {
-        final String bearer = request.getHeader(AUTHORIZATION);
-        if (bearer != null) {
-            final String signedAccessToken = bearer.replaceFirst("Bearer ", "");
-            final Long memberId = accessTokenVerifier.verify(signedAccessToken);
+        final String signedRefreshToken = request.getHeader(AUTHORIZATION_REFRESH_TOKEN);
+        if (signedRefreshToken != null) {
+            final RefreshToken verifiedRefreshToken = refreshTokenVerifier.verify(signedRefreshToken);
 
-            request.setAttribute(AUTHORIZATION, memberId);
+            request.setAttribute(AUTHORIZATION_REFRESH_TOKEN, verifiedRefreshToken.getValue());
         }
 
         filterChain.doFilter(request, response);

@@ -13,13 +13,13 @@ import java.io.IOException;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-class AuthFilterTest {
+class AuthAccessFilterTest {
 
-    private AuthFilter authFilter;
+    private AuthAccessFilter authAccessFilter;
 
     @BeforeEach
     void setUp() {
-        authFilter = new AuthFilter(new AccessTokenVerifierStub());
+        authAccessFilter = new AuthAccessFilter(new AccessTokenVerifierStub());
     }
 
     @DisplayName("[SUCCESS] 액세스 토큰 서명을 검증하고 내부 값을 HttpServletRequest에 Authorization 이라는 이름으로 설정해둔다.")
@@ -32,7 +32,7 @@ class AuthFilterTest {
         final MockFilterChain filterChain = new MockFilterChain();
 
         // when
-        authFilter.doFilter(request, response, filterChain);
+        authAccessFilter.doFilter(request, response, filterChain);
 
         // then
         assertSoftly(softly -> {
