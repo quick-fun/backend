@@ -38,7 +38,7 @@ public final class VotePostCommandScenarioSpec {
 
         public VotePostRequestSpec 투표_게시글_등록을_요청한다(final CreateVotePostRequest 투표_게시글_저장_요청_객체) {
             this.응답 = ApiScenarioSpec.post(
-                    POST_VOTE_POST_CREATE.getUrl(),
+                    POST_VOTE_POST_CREATE,
                     투표_게시글_저장_요청_객체
             );
 
