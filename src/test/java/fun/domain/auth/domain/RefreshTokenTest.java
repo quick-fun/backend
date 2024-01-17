@@ -45,4 +45,18 @@ class RefreshTokenTest {
                 .isNotBlank()
                 .isNotEqualTo(token);
     }
+
+    @DisplayName("[SUCCESS] 리프래시 토큰이 같지 않은지 확인한다.")
+    @Test
+    void success_isNotSame() {
+        // given
+        final RefreshToken one = new RefreshToken(UUID.randomUUID().toString());
+        final RefreshToken two = new RefreshToken(UUID.randomUUID().toString());
+
+        // when
+        final boolean actual = one.isNotSame(two);
+
+        // then
+        assertThat(actual).isTrue();
+    }
 }

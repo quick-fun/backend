@@ -29,6 +29,10 @@ public class RefreshToken {
         return refreshTokenSigner.sign(value);
     }
 
+    public boolean isNotSame(final RefreshToken requestRefreshToken) {
+        return !this.equals(requestRefreshToken);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
