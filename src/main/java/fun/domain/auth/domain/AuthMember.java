@@ -70,6 +70,7 @@ public class AuthMember {
     }
 
     public String publishRefreshToken(final RefreshTokenSigner refreshTokenSigner) {
+        this.refreshToken = RefreshToken.publishRefreshToken();
         return this.refreshToken.sign(refreshTokenSigner);
     }
 

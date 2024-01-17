@@ -1,5 +1,6 @@
 package fun.domain.auth.service.command;
 
+import fun.domain.auth.config.filter.RefreshTokenVerifier;
 import fun.domain.auth.domain.AccessTokenSigner;
 import fun.domain.auth.domain.AuthMember;
 import fun.domain.auth.domain.AuthMemberRepository;
@@ -28,6 +29,7 @@ public class AuthCommandService {
     private final SocialAccessTokenProviderComposite socialAccessTokenProviderComposite;
     private final AccessTokenSigner accessTokenSigner;
     private final RefreshTokenSigner refreshTokenSigner;
+    private final RefreshTokenVerifier refreshTokenVerifier;
     private final AuthMemberRepository authMemberRepository;
     private final MemberCommandRepository memberCommandRepository;
 
@@ -77,5 +79,17 @@ public class AuthCommandService {
                 findAuthMember.publishAccessToken(accessTokenSigner),
                 findAuthMember.publishRefreshToken(refreshTokenSigner)
         );
+    }
+
+    public TokenResponse recreateTokens(final String signedRefreshToken) {
+        final RefreshToken verifiedRefreshToken = refreshTokenVerifier.verify(signedRefreshToken);
+        return createTokenResponse(
+                getAuthMemberOrThrowException(verifiedRefreshToken)
+        );
+    }
+
+    private AuthMember getAuthMemberOrThrowException(final RefreshToken refreshToken) {
+        return authMemberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("리프래시 토큰으로 인증용 사용자를 조회할 수 없습니다."));
     }
 }
