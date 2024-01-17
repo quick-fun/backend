@@ -8,7 +8,7 @@ import io.restassured.response.Response;
 
 import java.util.Map;
 
-import static fun.scenario.spec.ApiUrl.POST_JOIN_SOCIAL_MEMBER;
+import static fun.ApiUrl.POST_JOIN_SOCIAL_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.CREATED;
 

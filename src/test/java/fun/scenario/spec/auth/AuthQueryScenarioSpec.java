@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 
 import java.util.Map;
 
-import static fun.scenario.spec.ApiUrl.GET_AUTHENTICATION_SOCIAL;
+import static fun.ApiUrl.GET_AUTHENTICATION_SOCIAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.LOCATION;
 

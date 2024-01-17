@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 
 import java.time.LocalDateTime;
 
-import static fun.scenario.spec.ApiUrl.POST_VOTE_POST_CREATE;
+import static fun.ApiUrl.POST_VOTE_POST_CREATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.CREATED;
 
