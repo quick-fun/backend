@@ -1,4 +1,4 @@
-package fun.domain.auth.argument;
+package fun.domain.auth.config.argument;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

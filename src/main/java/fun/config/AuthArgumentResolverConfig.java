@@ -1,6 +1,6 @@
-package fun.config.auth;
+package fun.config;
 
-import fun.domain.auth.argument.AuthArgumentResolver;
+import fun.domain.auth.config.argument.AuthArgumentResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
