@@ -1,11 +1,16 @@
 package fun.testconfig;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fun.common.auth.AuthAccessToken;
+import fun.domain.auth.config.filter.AccessTokenVerifier;
 import fun.domain.auth.config.filter.AuthAccessFilter;
+import fun.domain.auth.config.filter.RefreshTokenVerifier;
 import fun.domain.auth.controller.command.AuthCommandController;
 import fun.domain.auth.controller.query.AuthQueryController;
 import fun.domain.auth.service.command.AuthCommandService;
 import fun.domain.auth.service.query.AuthQueryService;
-import jakarta.servlet.ServletException;
+import fun.domain.vote.post.controller.command.VotePostCommandController;
+import fun.domain.vote.post.service.command.VotePostCommandService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -33,11 +36,12 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 
 @WebMvcTest(controllers = {
         AuthCommandController.class,
-        AuthQueryController.class
+        AuthQueryController.class,
+        VotePostCommandController.class
 })
 @Import({
         RestDocsConfig.class,
-        FilterTestConfig.class
+        TokenVerifierTestConfig.class
 })
 public abstract class ControllerTestConfig {
 
@@ -49,6 +53,11 @@ public abstract class ControllerTestConfig {
     @Autowired
     protected RestDocumentationContextProvider restDocumentationContextProvider;
 
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @Autowired
+    private AccessTokenVerifier accessTokenVerifier;
 
     @MockBean
     protected AuthCommandService authCommandService;
@@ -56,14 +65,24 @@ public abstract class ControllerTestConfig {
     @MockBean
     protected AuthQueryService authQueryService;
 
+    @MockBean
+    protected VotePostCommandService votePostCommandService;
+
     @BeforeEach
-    void controllerTestConfigSetUp(
-            final WebApplicationContext webApplicationContext
-    ) {
+    void controllerTestConfigSetUp(final WebApplicationContext webApplicationContext) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentationContextProvider))
+                .addFilter(new AuthAccessFilter(accessTokenVerifier))
                 .alwaysDo(restDocs)
                 .build();
+    }
+
+    protected void mockingAuthAccessTokenReturn(final AuthAccessToken authAccessToken) {
+        when(
+                accessTokenVerifier.verify(any(String.class))
+        ).thenReturn(
+                authAccessToken.memberId()
+        );
     }
 }
 
@@ -85,13 +104,29 @@ class RestDocsConfig {
 }
 
 @TestConfiguration
-class FilterTestConfig {
+class TokenVerifierTestConfig {
 
     @Bean
-    AuthAccessFilter authFilter() throws ServletException, IOException {
-        final AuthAccessFilter mock = Mockito.mock(AuthAccessFilter.class);
-        doNothing().when(mock).doFilter(any(), any(), any());
+    AccessTokenVerifier accessTokenVerifier() {
+        return Mockito.mock(AccessTokenVerifier.class);
+    }
 
-        return mock;
+    @Bean
+    RefreshTokenVerifier refreshTokenVerifier() {
+        return Mockito.mock(RefreshTokenVerifier.class);
     }
 }
+
+//@TestConfiguration
+//class ArgumentResolverTestConfig {
+//
+//    @Bean
+//    AuthAccessArgumentResolver authAccessArgumentResolver() {
+//        return Mockito.mock(AuthAccessArgumentResolver.class);
+//    }
+//
+//    @Bean
+//    AuthRefreshArgumentResolver authRefreshArgumentResolver() {
+//        return Mockito.mock(AuthRefreshArgumentResolver.class);
+//    }
+//}

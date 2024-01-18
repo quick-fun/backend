@@ -1,6 +1,7 @@
 package fun.domain.auth.config.argument;
 
 import fun.common.auth.AuthRefreshToken;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -26,7 +27,10 @@ public class AuthRefreshArgumentResolver implements HandlerMethodArgumentResolve
             final NativeWebRequest webRequest,
             final WebDataBinderFactory binderFactory
     ) throws Exception {
-        return Optional.ofNullable(webRequest.getAttribute(AUTHORIZATION_REFRESH_TOKEN, 0))
+        final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        final Object authRefreshTokenValue = request.getAttribute(AUTHORIZATION_REFRESH_TOKEN);
+
+        return Optional.ofNullable(authRefreshTokenValue)
                 .filter(value -> value instanceof String)
                 .map(value -> new AuthRefreshToken((String) value))
                 .orElseThrow(() -> new IllegalArgumentException("리프래시 토큰 값이 존재하지 않습니다."));

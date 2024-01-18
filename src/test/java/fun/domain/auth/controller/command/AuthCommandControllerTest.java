@@ -1,5 +1,7 @@
 package fun.domain.auth.controller.command;
 
+import fun.common.auth.AuthAccessToken;
+import fun.common.auth.AuthRefreshToken;
 import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.service.command.response.TokenResponse;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static fun.ApiUrl.POST_JOIN_SOCIAL_MEMBER;
 import static fun.ApiUrl.PUT_NEW_TOKENS;
+import static fun.common.auth.AuthRefreshToken.AUTHORIZATION_REFRESH_TOKEN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.when;
@@ -31,6 +34,7 @@ class AuthCommandControllerTest extends ControllerTestConfig {
     @Test
     void success_createMemberAndReturnToken() throws Exception {
         // when
+        mockingAuthAccessToken(new AuthAccessToken(1L));
         when(
                 authCommandService.createTokens(
                         any(AuthSocialType.class),
@@ -66,6 +70,7 @@ class AuthCommandControllerTest extends ControllerTestConfig {
     @Test
     void success_recreateTokens() throws Exception {
         // when
+        mockingAuthRefreshToken(new AuthRefreshToken("newSignedRefreshToken"));
         when(
                 authCommandService.recreateTokens(any(RefreshToken.class))
         ).thenReturn(
@@ -75,7 +80,7 @@ class AuthCommandControllerTest extends ControllerTestConfig {
         // expect
         mockMvc.perform(
                         put(PUT_NEW_TOKENS)
-                                .header("RefreshToken", "signedRefreshToken")
+                                .header(AUTHORIZATION_REFRESH_TOKEN, "signedRefreshToken")
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))

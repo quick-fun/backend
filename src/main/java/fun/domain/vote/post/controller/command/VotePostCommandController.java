@@ -1,6 +1,7 @@
 package fun.domain.vote.post.controller.command;
 
 import fun.common.auth.AuthAccessToken;
+import fun.domain.auth.config.argument.AuthAccessPrinciple;
 import fun.domain.vote.post.service.command.VotePostCommandService;
 import fun.domain.vote.post.service.command.request.CreateVotePostRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,13 @@ public class VotePostCommandController {
     private final VotePostCommandService votePostCommandService;
 
     @PostMapping
-    ResponseEntity<Void> createVotePost(@RequestBody final CreateVotePostRequest createVotePostRequest) {
+    ResponseEntity<Void> createVotePost(
+            @AuthAccessPrinciple final AuthAccessToken authAccessToken,
+            @RequestBody final CreateVotePostRequest createVotePostRequest
+    ) {
         final Long savedVotePostId = votePostCommandService.createVotePost(
-                new AuthAccessToken(1L), createVotePostRequest
+                authAccessToken.memberId(),
+                createVotePostRequest
         );
 
         return ResponseEntity

@@ -1,5 +1,6 @@
 package fun.domain.vote.post.domain;
 
+import fun.domain.vote.item.domain.VoteItem;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 
@@ -35,6 +37,9 @@ public class VotePost {
     @Embedded
     private DueDate dueDate;
 
+    @OneToMany(mappedBy = "votePostId", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<VoteItem> voteItems = new ArrayList<>();
+
     @JoinColumn(name = "vote_tag_id")
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private VoteTag voteTag;
@@ -43,7 +48,7 @@ public class VotePost {
     @CollectionTable(name = "vote_post_vote_label", joinColumns = @JoinColumn(name = "vote_post_id"))
     private List<Long> voteLabelIds = new ArrayList<>();
 
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "member_id")
     private Long memberId;
 
     protected VotePost() {
@@ -53,10 +58,9 @@ public class VotePost {
             final String title,
             final String content,
             final DueDate dueDate,
-            final VoteTag voteTag,
-            final List<Long> voteLabelIds
+            final VoteTag voteTag
     ) {
-        this(null, title, content, dueDate, voteTag, voteLabelIds);
+        this(null, title, content, dueDate, new ArrayList<>(), voteTag, new ArrayList<>());
     }
 
     protected VotePost(
@@ -64,6 +68,7 @@ public class VotePost {
             final String title,
             final String content,
             final DueDate dueDate,
+            final List<VoteItem> voteItems,
             final VoteTag voteTag,
             final List<Long> voteLabelIds
     ) {
@@ -71,6 +76,7 @@ public class VotePost {
         this.title = title;
         this.content = content;
         this.dueDate = dueDate;
+        this.voteItems = voteItems;
         this.voteTag = voteTag;
         this.voteLabelIds = voteLabelIds;
     }
@@ -81,6 +87,13 @@ public class VotePost {
     ) {
         voteAssignHostValidator.validate(requestMemberId);
         this.memberId = requestMemberId;
+    }
+
+    public void addVoteItems(final List<VoteItem> requestVoteItems) {
+        for (final VoteItem requestVoteItem : requestVoteItems) {
+            requestVoteItem.assignVotePost(this.id);
+        }
+        this.voteItems.addAll(requestVoteItems);
     }
 
     @Override
@@ -94,5 +107,19 @@ public class VotePost {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "VotePost{" +
+               "id=" + id +
+               ", title='" + title + '\'' +
+               ", content='" + content + '\'' +
+               ", dueDate=" + dueDate +
+               ", voteItems=" + voteItems +
+               ", voteTag=" + voteTag +
+               ", voteLabelIds=" + voteLabelIds +
+               ", memberId=" + memberId +
+               '}';
     }
 }

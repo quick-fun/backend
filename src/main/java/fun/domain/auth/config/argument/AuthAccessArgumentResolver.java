@@ -1,6 +1,7 @@
 package fun.domain.auth.config.argument;
 
 import fun.common.auth.AuthAccessToken;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -26,7 +27,10 @@ public class AuthAccessArgumentResolver implements HandlerMethodArgumentResolver
             final NativeWebRequest webRequest,
             final WebDataBinderFactory binderFactory
     ) throws Exception {
-        return Optional.ofNullable(webRequest.getAttribute(AUTHORIZATION_ACCESS_TOKEN, 0))
+        final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        final Object authAccessTokenValue = request.getAttribute(AUTHORIZATION_ACCESS_TOKEN);
+
+        return Optional.ofNullable(authAccessTokenValue)
                 .filter(value -> value instanceof Long)
                 .map(value -> new AuthAccessToken((Long) value))
                 .orElseThrow(() -> new IllegalArgumentException("사용자 식별자 값이 존재하지 않습니다."));

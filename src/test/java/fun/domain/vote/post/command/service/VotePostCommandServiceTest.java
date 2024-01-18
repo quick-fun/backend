@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,7 +37,7 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
     @Test
     void success_createVotePost() {
         // given
-        final Member savedMember = memberCommandRepository.saveAndFlush(
+        final Member expectedMember = memberCommandRepository.saveAndFlush(
                 new Member(
                         "사용자 닉네임",
                         "male",
@@ -44,34 +46,38 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
                 )
         );
 
-        final VoteTag savedVoteTag = voteTagCommandRepository.saveAndFlush(
+        final VoteTag expectedVoteTag = voteTagCommandRepository.saveAndFlush(
                 new VoteTag(Tag.SCIENCE)
         );
 
-        // when
-        final AuthAccessToken authAccessToken = new AuthAccessToken(savedMember.getId());
         final CreateVotePostRequest createVotePostRequest = new CreateVotePostRequest(
                 "투표 게시글 제목",
                 "투표 게시글 내용",
-                savedVoteTag.getId(),
-                LocalDateTime.now().plusHours(24)
+                expectedVoteTag.getId(),
+                List.of("투표 항목 내용1", "투표 항목 내용2"),
+                LocalDateTime.now().plusHours(24),
+                true
         );
-        final Long savedVotePostId = votePostCommandService.createVotePost(
-                authAccessToken,
+
+        // when
+        final Long expectedVotePostId = votePostCommandService.createVotePost(
+                expectedMember.getId(),
                 createVotePostRequest
         );
 
         // then
-        final Optional<VotePost> maybeActual = votePostCommandRepository.findById(savedVotePostId);
+        final Optional<VotePost> maybeActual = votePostCommandRepository.findById(expectedVotePostId);
         assertSoftly(softly -> {
             softly.assertThat(maybeActual).isPresent();
             final VotePost actual = maybeActual.get();
 
-            softly.assertThat(actual.getId()).isEqualTo(savedVotePostId);
+            softly.assertThat(actual.getId()).isEqualTo(expectedVotePostId);
             softly.assertThat(actual.getTitle()).isEqualTo("투표 게시글 제목");
             softly.assertThat(actual.getContent()).isEqualTo("투표 게시글 내용");
-            softly.assertThat(actual.getVoteTag()).isEqualTo(savedVoteTag);
+            softly.assertThat(actual.getVoteItems()).isNotEmpty();
+            softly.assertThat(actual.getVoteTag()).isEqualTo(expectedVoteTag);
             softly.assertThat(actual.getVoteLabelIds()).isNullOrEmpty();
+            softly.assertThat(actual.getMemberId()).isEqualTo(expectedMember.getId());
         });
     }
 
@@ -89,13 +95,15 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
                 "투표 게시글 제목",
                 "투표 게시글 내용",
                 savedVoteTag.getId(),
-                LocalDateTime.now().plusHours(24)
+                new ArrayList<>(),
+                LocalDateTime.now().plusHours(24),
+                true
         );
 
         // then
         assertThatThrownBy(() ->
                 votePostCommandService.createVotePost(
-                        wrongAuthAccessToken,
+                        wrongAuthAccessToken.memberId(),
                         createVotePostRequest
                 )
         ).isInstanceOf(IllegalStateException.class);
