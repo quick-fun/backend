@@ -1,6 +1,7 @@
 package fun.domain.auth.service.command;
 
 import fun.domain.auth.domain.AccessTokenSignerStub;
+import fun.domain.auth.domain.AuthMember;
 import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.domain.RefreshTokenSignerStub;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static fun.domain.auth.service.command.token.SocialAccessTokenProviderStub.ONE_SOCIAL_ACCESS_TOKEN;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class AuthCommandServiceTest extends ServiceTestConfig {
@@ -48,15 +50,24 @@ class AuthCommandServiceTest extends ServiceTestConfig {
     @Test
     void success_recreateTokens() {
         // given
+        final RefreshToken oldRefreshToken = new RefreshToken("refreshToken");
+        authMemberRepository.save(
+                new AuthMember(
+                        1L,
+                        ONE_SOCIAL_ACCESS_TOKEN.toSocialAccessToken(),
+                        oldRefreshToken,
+                        AuthSocialType.KAKAO,
+                        1L
+                )
+        );
+
         final TokenResponse oldTokens = authCommandService.createTokens(
                 AuthSocialType.KAKAO,
                 SocialAccessTokenProviderCompositeStub.ONE_AUTH_CODE
         );
 
         // when
-        final TokenResponse actual = authCommandService.recreateTokens(
-                new RefreshToken(oldTokens.refreshToken())
-        );
+        final TokenResponse actual = authCommandService.recreateTokens(oldRefreshToken);
 
         // expect
         assertSoftly(softly -> {

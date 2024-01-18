@@ -29,7 +29,6 @@ class VoteItemTest {
 
         // when
         voteItem.assignVotePost(1L);
-        voteItem.assignVotePost(1L);
 
         // then
         assertThatThrownBy(() ->
