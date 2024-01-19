@@ -8,6 +8,7 @@ import fun.domain.vote.comment.domain.CommentCommandRepository;
 import fun.domain.vote.label.domain.VoteLabelCommandRepository;
 import fun.domain.vote.post.domain.VotePostCommandRepository;
 import fun.domain.vote.post.domain.VoteTagCommandRepository;
+import fun.domain.vote.query.repository.CommentQueryRepository;
 import fun.domain.vote.query.repository.MedalQueryRepository;
 import fun.domain.vote.query.repository.MemberQueryRepository;
 import fun.domain.vote.query.repository.VoteLabelQueryRepository;
@@ -52,4 +53,7 @@ public abstract class ServiceTestConfig extends DomainValidatorTestConfig {
 
     @Autowired
     protected CommentCommandRepository commentCommandRepository;
+
+    @Autowired
+    protected CommentQueryRepository commentQueryRepository;
 }

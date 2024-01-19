@@ -13,6 +13,7 @@ public final class ApiUrl {
     /**
      * COMMENT
      **/
+    public static final String GET_COMMENT_PAGE = "/api/v1/posts/{votePostId}/comments";
     public static final String POST_COMMENT = "/api/v1/posts/{votePostId}/comments";
 
 
