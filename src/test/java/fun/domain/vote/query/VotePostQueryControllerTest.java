@@ -1,4 +1,4 @@
-package fun.domain.vote.post.controller.query;
+package fun.domain.vote.query;
 
 import fun.domain.vote.query.response.MemberProfileResponse;
 import fun.domain.vote.query.response.TagResponse;
@@ -24,6 +24,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class VotePostQueryControllerTest extends ControllerTestConfig {
@@ -107,7 +108,7 @@ class VotePostQueryControllerTest extends ControllerTestConfig {
     void success_readVotePostPage() throws Exception {
         // when
         when(
-                votePostQueryService.findVotePostPage(anyLong(), anyLong())
+                votePostQueryService.pageVotePosts(anyLong(), anyLong())
         ).thenReturn(
                 new VotePostPageResponse(
                         List.of(
@@ -153,6 +154,10 @@ class VotePostQueryControllerTest extends ControllerTestConfig {
                 )
                 .andExpect(status().isOk())
                 .andDo(restDocs.document(
+                        queryParameters(
+                                parameterWithName("cursor").description("이전 데이터의 마지막 식별자값 + 1"),
+                                parameterWithName("limit").description("원하는 데이터의 개수")
+                        ),
                         responseFields(
                                 fieldWithPath("data.[].votePostId").type(String.class).description("투표 게시글 식별자값"),
                                 fieldWithPath("data.[].title").type(String.class).description("투표 게시글 제목"),

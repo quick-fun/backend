@@ -155,7 +155,7 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
         }
 
         // when
-        final VotePostPageResponse actual = votePostQueryService.findVotePostPage(10L, 10L);
+        final VotePostPageResponse actual = votePostQueryService.pageVotePosts(11L, 10L);
 
         // then
         assertThat(actual.data()).hasSize(10);

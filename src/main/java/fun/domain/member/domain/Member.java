@@ -72,7 +72,7 @@ public class Member {
         medalIds.add(requestMedalId);
     }
 
-    public Long getLatestMemberId() {
+    public Long getLatestMedalId() {
         return medalIds.stream()
                 .min(Long::compare)
                 .orElse(0L);
