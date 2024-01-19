@@ -17,7 +17,7 @@ public class Comment extends BaseEntity {
     private Long id;
 
     @Column(name = "content", nullable = false)
-    private String comment;
+    private String content;
 
     @Column(name = "vote_post_id", nullable = false)
     private Long votePostId;
@@ -29,21 +29,21 @@ public class Comment extends BaseEntity {
     }
 
     public Comment(
-            final String comment,
+            final String content,
             final Long votePostId,
             final Long memberId
     ) {
-        this(null, comment, votePostId, memberId);
+        this(null, content, votePostId, memberId);
     }
 
     protected Comment(
             final Long id,
-            final String comment,
+            final String content,
             final Long votePostId,
             final Long memberId
     ) {
         this.id = id;
-        this.comment = comment;
+        this.content = content;
         this.votePostId = votePostId;
         this.memberId = memberId;
     }
