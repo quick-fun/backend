@@ -68,7 +68,7 @@ public class CommentQueryService {
                                     comment.getId(),
                                     comment.getMemberId(),
                                     member.getNickname(),
-                                    medal.getTitle(),
+                                    medal.getMedalType().getTitle(),
                                     member.getProfileImageUrl(),
                                     comment.getContent(),
                                     comment.getCreatedAt()

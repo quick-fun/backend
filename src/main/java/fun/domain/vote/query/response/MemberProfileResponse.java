@@ -14,7 +14,7 @@ public record MemberProfileResponse(
         return new MemberProfileResponse(
                 member.getId(),
                 member.getNickname(),
-                medal.getTitle(),
+                medal.getMedalType().getTitle(),
                 member.getProfileImageUrl()
         );
     }
