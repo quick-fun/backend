@@ -1,4 +1,4 @@
-package fun.domain.vote.post.service.command;
+package fun.domain.vote.post.service;
 
 import fun.domain.vote.item.domain.VoteItem;
 import fun.domain.vote.post.domain.DueDate;
@@ -7,7 +7,7 @@ import fun.domain.vote.post.domain.VotePost;
 import fun.domain.vote.post.domain.VotePostCommandRepository;
 import fun.domain.vote.post.domain.VoteTag;
 import fun.domain.vote.post.domain.VoteTagCommandRepository;
-import fun.domain.vote.post.service.command.request.CreateVotePostRequest;
+import fun.domain.vote.post.service.request.CreateVotePostRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

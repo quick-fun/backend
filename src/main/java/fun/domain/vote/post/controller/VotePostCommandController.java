@@ -1,9 +1,9 @@
-package fun.domain.vote.post.controller.command;
+package fun.domain.vote.post.controller;
 
 import fun.common.auth.AuthAccessToken;
 import fun.domain.auth.config.argument.AuthAccessPrinciple;
-import fun.domain.vote.post.service.command.VotePostCommandService;
-import fun.domain.vote.post.service.command.request.CreateVotePostRequest;
+import fun.domain.vote.post.service.VotePostCommandService;
+import fun.domain.vote.post.service.request.CreateVotePostRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

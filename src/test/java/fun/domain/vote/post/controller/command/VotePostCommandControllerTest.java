@@ -1,6 +1,6 @@
 package fun.domain.vote.post.controller.command;
 
-import fun.domain.vote.post.service.command.request.CreateVotePostRequest;
+import fun.domain.vote.post.service.request.CreateVotePostRequest;
 import fun.testconfig.ControllerTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

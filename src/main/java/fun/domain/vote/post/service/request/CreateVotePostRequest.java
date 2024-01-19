@@ -1,4 +1,4 @@
-package fun.domain.vote.post.service.command.request;
+package fun.domain.vote.post.service.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
