@@ -14,6 +14,7 @@ import fun.domain.vote.query.response.TagResponse;
 import fun.domain.vote.query.response.VoteItemResponse;
 import fun.domain.vote.query.response.VoteLabelResponse;
 import fun.domain.vote.query.response.VotePostDetailResponse;
+import fun.domain.vote.query.response.VotePostPageResponse;
 import fun.domain.vote.query.support.VoteItemRateSupport;
 import fun.testconfig.ServiceTestConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class VotePostQueryServiceTest extends ServiceTestConfig {
@@ -112,5 +114,66 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
                 .stream()
                 .map(voteItem -> VoteItemResponse.from(voteItem, new VoteItemRateSupport(expectedVotePost)))
                 .collect(Collectors.toList());
+    }
+
+    @DisplayName("[SUCCESS] 투표 게시글 페이징 목록을 조회한다.")
+    @Test
+    void success_findVotePostPage() {
+        // given
+        final Medal expectedMedal = medalCommandRepository.saveAndFlush(
+                new Medal(
+                        "메달명",
+                        "메달 내용",
+                        "메달 습득 조건 설명"
+                )
+        );
+
+        final Member expectedMember = memberCommandRepository.saveAndFlush(
+                new Member(
+                        "사용자 닉네임",
+                        "성별",
+                        "사용자 이미지 url",
+                        0
+                )
+        );
+        expectedMember.addMedal(expectedMedal.getId());
+
+        final VoteLabel expectedVoteLabel = voteLabelCommandRepository.saveAndFlush(
+                new VoteLabel(
+                        "라벨명"
+                )
+        );
+
+        final VoteTag expectedVoteTag = voteTagCommandRepository.saveAndFlush(
+                new VoteTag(
+                        Tag.SCIENCE.SCIENCE
+                )
+        );
+
+        for (int count = 0; count < 10; count++) {
+            saveVotePost(expectedVoteTag, expectedMember, expectedVoteLabel, List.of(new VoteItem("투표 항목 내용")));
+        }
+
+        // when
+        final VotePostPageResponse actual = votePostQueryService.findVotePostPage(10L, 10L);
+
+        // then
+        assertThat(actual.data()).hasSize(10);
+    }
+
+    private VotePost saveVotePost(final VoteTag expectedVoteTag, final Member expectedMember, final VoteLabel expectedVoteLabel, final List<VoteItem> voteItems) {
+        final VotePost expectedVotePost = votePostCommandRepository.save(
+                new VotePost(
+                        "투표 게시글 제목",
+                        "투표 게시글 내용",
+                        new DueDate(LocalDateTime.now().plusHours(24)),
+                        expectedVoteTag
+                )
+        );
+        expectedVotePost.assignHost(expectedMember.getId(), new VoteAssignHostValidatorSuccessStub());
+        expectedVotePost.addVoteLabel(expectedVoteLabel.getId());
+        expectedVotePost.addVoteItems(voteItems);
+        votePostCommandRepository.flush();
+        return expectedVotePost;
     }
 }
