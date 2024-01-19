@@ -1,6 +1,6 @@
 package fun.infra.auth.kakao;
 
-import fun.domain.auth.service.command.token.SocialAccessTokenDto;
+import fun.domain.auth.service.token.SocialAccessTokenDto;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;

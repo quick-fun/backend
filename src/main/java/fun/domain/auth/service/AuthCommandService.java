@@ -1,4 +1,4 @@
-package fun.domain.auth.service.command;
+package fun.domain.auth.service;
 
 import fun.domain.auth.domain.AccessTokenSigner;
 import fun.domain.auth.domain.AuthMember;
@@ -7,10 +7,10 @@ import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.domain.RefreshTokenSigner;
 import fun.domain.auth.domain.SocialAccessToken;
-import fun.domain.auth.service.command.response.TokenResponse;
-import fun.domain.auth.service.command.token.SocialAccessTokenDto;
-import fun.domain.auth.service.command.token.SocialAccessTokenProviderComposite;
-import fun.domain.auth.service.command.token.SocialProfileDto;
+import fun.domain.auth.service.response.TokenResponse;
+import fun.domain.auth.service.token.SocialAccessTokenDto;
+import fun.domain.auth.service.token.SocialAccessTokenProviderComposite;
+import fun.domain.auth.service.token.SocialProfileDto;
 import fun.domain.member.domain.Member;
 import fun.domain.member.domain.MemberCommandRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package fun.scenario.spec.auth;
 
 import fun.domain.auth.domain.AuthSocialType;
-import fun.domain.auth.service.command.token.SocialAccessTokenRequest;
+import fun.domain.auth.service.token.SocialAccessTokenRequest;
 import fun.scenario.spec.ApiScenarioSpec;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

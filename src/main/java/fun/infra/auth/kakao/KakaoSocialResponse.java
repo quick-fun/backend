@@ -1,7 +1,7 @@
 package fun.infra.auth.kakao;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import fun.domain.auth.service.command.token.SocialProfileDto;
+import fun.domain.auth.service.token.SocialProfileDto;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 

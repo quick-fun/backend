@@ -1,4 +1,4 @@
-package fun.domain.auth.service.command.response;
+package fun.domain.auth.service.response;
 
 public record TokenResponse(
         String accessToken,

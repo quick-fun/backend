@@ -1,11 +1,11 @@
-package fun.domain.auth.controller.command;
+package fun.domain.auth.controller;
 
 import fun.common.auth.AuthRefreshToken;
 import fun.domain.auth.config.argument.AuthRefreshPrinciple;
 import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
-import fun.domain.auth.service.command.AuthCommandService;
-import fun.domain.auth.service.command.response.TokenResponse;
+import fun.domain.auth.service.AuthCommandService;
+import fun.domain.auth.service.response.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

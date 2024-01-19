@@ -1,6 +1,6 @@
-package fun.domain.auth.service.query;
+package fun.domain.auth.service;
 
-import fun.domain.auth.service.query.authcode.AuthCodeProviderComposite;
+import fun.domain.auth.service.authcode.AuthCodeProviderComposite;
 import fun.domain.auth.domain.AuthSocialType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

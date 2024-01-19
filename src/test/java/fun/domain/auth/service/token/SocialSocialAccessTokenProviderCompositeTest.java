@@ -1,4 +1,4 @@
-package fun.domain.auth.service.command.token;
+package fun.domain.auth.service.token;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

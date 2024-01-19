@@ -4,7 +4,7 @@ import fun.common.auth.AuthAccessToken;
 import fun.common.auth.AuthRefreshToken;
 import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
-import fun.domain.auth.service.command.response.TokenResponse;
+import fun.domain.auth.service.response.TokenResponse;
 import fun.testconfig.ControllerTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

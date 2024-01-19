@@ -1,18 +1,19 @@
 package fun.domain.auth.service.command;
 
+import fun.domain.auth.service.AuthCommandService;
 import fun.domain.auth.domain.AccessTokenSignerStub;
 import fun.domain.auth.domain.AuthMember;
 import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.domain.RefreshTokenSignerStub;
-import fun.domain.auth.service.command.response.TokenResponse;
-import fun.domain.auth.service.command.token.SocialAccessTokenProviderCompositeStub;
+import fun.domain.auth.service.response.TokenResponse;
+import fun.domain.auth.service.token.SocialAccessTokenProviderCompositeStub;
 import fun.testconfig.ServiceTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static fun.domain.auth.service.command.token.SocialAccessTokenProviderStub.ONE_SOCIAL_ACCESS_TOKEN;
+import static fun.domain.auth.service.token.SocialAccessTokenProviderStub.ONE_SOCIAL_ACCESS_TOKEN;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class AuthCommandServiceTest extends ServiceTestConfig {

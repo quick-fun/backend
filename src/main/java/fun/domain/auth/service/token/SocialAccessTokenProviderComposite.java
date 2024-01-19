@@ -1,4 +1,4 @@
-package fun.domain.auth.service.command.token;
+package fun.domain.auth.service.token;
 
 import fun.domain.auth.domain.AuthSocialType;
 import org.springframework.stereotype.Component;

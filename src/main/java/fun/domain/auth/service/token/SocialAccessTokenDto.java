@@ -1,4 +1,4 @@
-package fun.domain.auth.service.command.token;
+package fun.domain.auth.service.token;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import fun.domain.auth.domain.SocialAccessToken;

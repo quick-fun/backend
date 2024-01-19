@@ -1,7 +1,7 @@
-package fun.domain.auth.controller.query;
+package fun.domain.auth.controller;
 
 import fun.domain.auth.domain.AuthSocialType;
-import fun.domain.auth.service.query.AuthQueryService;
+import fun.domain.auth.service.AuthQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

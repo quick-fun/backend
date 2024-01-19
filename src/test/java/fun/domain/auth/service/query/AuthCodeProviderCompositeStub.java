@@ -1,7 +1,7 @@
 package fun.domain.auth.service.query;
 
 import fun.domain.auth.domain.AuthSocialType;
-import fun.domain.auth.service.query.authcode.AuthCodeProviderComposite;
+import fun.domain.auth.service.authcode.AuthCodeProviderComposite;
 import org.mockito.Mockito;
 
 import java.util.Collections;

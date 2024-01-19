@@ -1,5 +1,6 @@
 package fun.domain.auth.service.query;
 
+import fun.domain.auth.service.AuthQueryService;
 import fun.testconfig.ServiceTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
