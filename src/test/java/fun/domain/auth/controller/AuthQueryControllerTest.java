@@ -1,4 +1,4 @@
-package fun.domain.auth.controller.query;
+package fun.domain.auth.controller;
 
 import fun.domain.auth.domain.AuthSocialType;
 import fun.testconfig.ControllerTestConfig;

@@ -1,4 +1,4 @@
-package fun.domain.vote.post.command.service;
+package fun.domain.vote.post.service;
 
 import fun.common.auth.AuthAccessToken;
 import fun.domain.member.domain.Member;

@@ -1,4 +1,4 @@
-package fun.domain.auth.controller.command;
+package fun.domain.auth.controller;
 
 import fun.common.auth.AuthAccessToken;
 import fun.common.auth.AuthRefreshToken;

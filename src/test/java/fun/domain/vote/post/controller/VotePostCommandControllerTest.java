@@ -1,4 +1,4 @@
-package fun.domain.vote.post.controller.command;
+package fun.domain.vote.post.controller;
 
 import fun.domain.vote.post.service.request.CreateVotePostRequest;
 import fun.testconfig.ControllerTestConfig;

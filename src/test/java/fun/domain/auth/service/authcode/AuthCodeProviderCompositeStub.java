@@ -1,4 +1,4 @@
-package fun.domain.auth.service.query;
+package fun.domain.auth.service.authcode;
 
 import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.service.authcode.AuthCodeProviderComposite;
