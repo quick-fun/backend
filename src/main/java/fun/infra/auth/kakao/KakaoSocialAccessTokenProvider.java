@@ -1,9 +1,9 @@
 package fun.infra.auth.kakao;
 
 import fun.domain.auth.domain.AuthSocialType;
-import fun.domain.auth.service.command.token.SocialAccessTokenProvider;
-import fun.domain.auth.service.command.token.SocialProfileDto;
-import fun.domain.auth.service.command.token.SocialAccessTokenDto;
+import fun.domain.auth.service.token.SocialAccessTokenProvider;
+import fun.domain.auth.service.token.SocialProfileDto;
+import fun.domain.auth.service.token.SocialAccessTokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;

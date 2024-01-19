@@ -1,6 +1,6 @@
 package fun.infra.auth.kakao;
 
-import fun.domain.auth.service.query.authcode.AuthCodeProvider;
+import fun.domain.auth.service.authcode.AuthCodeProvider;
 import fun.domain.auth.domain.AuthSocialType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
