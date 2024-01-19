@@ -7,6 +7,7 @@ public final class ApiUrl {
 
     /** VOTE_POST **/
     public static final String GET_VOTE_POST_DETAIL = "/api/v1/posts/{votePostId}";
+    public static final String GET_VOTE_POST_PAGE = "/api/v1/posts";
     public static final String POST_VOTE_POST_CREATE = "/api/v1/posts";
 
     /** AUTHENTICATION **/

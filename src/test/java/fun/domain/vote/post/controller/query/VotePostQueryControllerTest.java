@@ -5,6 +5,7 @@ import fun.domain.vote.query.response.TagResponse;
 import fun.domain.vote.query.response.VoteItemResponse;
 import fun.domain.vote.query.response.VoteLabelResponse;
 import fun.domain.vote.query.response.VotePostDetailResponse;
+import fun.domain.vote.query.response.VotePostPageResponse;
 import fun.testconfig.ControllerTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static fun.ApiUrl.GET_VOTE_POST_DETAIL;
+import static fun.ApiUrl.GET_VOTE_POST_PAGE;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -21,7 +24,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class VotePostQueryControllerTest extends ControllerTestConfig {
@@ -71,8 +73,8 @@ class VotePostQueryControllerTest extends ControllerTestConfig {
 
         // then
         mockMvc.perform(
-                get(GET_VOTE_POST_DETAIL, 1L)
-                        .pathInfo("/votePostId")
+                        get(GET_VOTE_POST_DETAIL, 1L)
+                                .pathInfo("/votePostId")
                                 .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
@@ -96,6 +98,74 @@ class VotePostQueryControllerTest extends ControllerTestConfig {
                                 fieldWithPath("profile.nickname").type(String.class).description("작성자(사용자) 닉네임"),
                                 fieldWithPath("profile.memberMedalTitle").type(String.class).description("작성자(사용자) 메달명"),
                                 fieldWithPath("profile.imageUrl").type(String.class).description("작성자(사용자) 이미지 url")
+                        )
+                ));
+    }
+
+    @DisplayName("[SUCCESS] 투표 게시글 페이징 목록을 조회한다.")
+    @Test
+    void success_readVotePostPage() throws Exception {
+        // when
+        when(
+                votePostQueryService.findVotePostPage(anyLong(), anyLong())
+        ).thenReturn(
+                new VotePostPageResponse(
+                        List.of(
+                                new VotePostPageResponse.VotePostPageSubResponse(
+                                        1L,
+                                        "투표 게시글 제목",
+                                        "투표 게시글 내용",
+                                        List.of(
+                                                new VoteItemResponse(
+                                                        1L,
+                                                        "투표 항목 내용1",
+                                                        0
+                                                ),
+                                                new VoteItemResponse(
+                                                        2L,
+                                                        "투표 항목 내용2",
+                                                        100
+                                                )
+                                        ),
+                                        new TagResponse(
+                                                1L,
+                                                "태그명"
+                                        ),
+                                        List.of(
+                                                new VoteLabelResponse(
+                                                        1L,
+                                                        "라벨명"
+                                                )
+                                        ),
+                                        LocalDateTime.now(),
+                                        0L
+                                )
+                        )
+                )
+        );
+
+        // then
+        mockMvc.perform(
+                        get(GET_VOTE_POST_PAGE)
+                                .queryParam("cursor", "10")
+                                .queryParam("limit", "10")
+                                .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                        responseFields(
+                                fieldWithPath("data.[].votePostId").type(String.class).description("투표 게시글 식별자값"),
+                                fieldWithPath("data.[].title").type(String.class).description("투표 게시글 제목"),
+                                fieldWithPath("data.[].content").type(String.class).description("투표 게시글 내용"),
+                                fieldWithPath("data.[].voteItems.[].voteItemId").type(Number.class).description("투표 항목 식별자값"),
+                                fieldWithPath("data.[].voteItems.[].voteItemTitle").type(String.class).description("투표 항목 내용"),
+                                fieldWithPath("data.[].voteItems.[].voteRate").type(Number.class).description("투표 항목 비율"),
+                                fieldWithPath("data.[].tag.tagId").type(Number.class).description("태그 식별자값"),
+                                fieldWithPath("data.[].tag.tagTitle").type(String.class).description("태그명"),
+                                fieldWithPath("data.[].labels.[].labelId").type(Number.class).description("라벨 식별자값"),
+                                fieldWithPath("data.[].labels.[].labelTitle").type(String.class).description("라벨명"),
+                                fieldWithPath("data.[].createdAt").type(LocalDateTime.class).description("투표 게시글 작성일자"),
+                                fieldWithPath("data.[].commentTotalCount").type(Number.class).description("댓글수")
                         )
                 ));
     }
