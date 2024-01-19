@@ -3,11 +3,16 @@ package fun.domain.vote.query;
 import fun.domain.medal.domain.Medal;
 import fun.domain.member.domain.Member;
 import fun.domain.vote.post.domain.VotePost;
+import fun.domain.vote.query.repository.MedalQueryRepository;
+import fun.domain.vote.query.repository.MemberQueryRepository;
+import fun.domain.vote.query.repository.VoteLabelQueryRepository;
+import fun.domain.vote.query.repository.VotePostQueryRepository;
 import fun.domain.vote.query.response.MemberProfileResponse;
 import fun.domain.vote.query.response.TagResponse;
 import fun.domain.vote.query.response.VoteItemResponse;
 import fun.domain.vote.query.response.VoteLabelResponse;
 import fun.domain.vote.query.response.VotePostDetailResponse;
+import fun.domain.vote.query.response.VotePostPageResponse;
 import fun.domain.vote.query.support.VoteItemRateSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -66,5 +71,29 @@ public class VotePostQueryService {
     private Medal getMemberLatestMedal(final Member member) {
         return medalQueryRepository.findById(member.getLatestMemberId())
                 .orElse(Medal.DEFAULT_MEDAL);
+    }
+
+    public VotePostPageResponse findVotePostPage(final Long cursor, final Long limit) {
+        return new VotePostPageResponse(
+                convertToVotePostPageResponse(
+                        votePostQueryRepository.findVotePostPage(cursor, limit)
+                )
+        );
+    }
+
+    private List<VotePostPageResponse.VotePostPageSubResponse> convertToVotePostPageResponse(final List<VotePost> findVotePosts) {
+        return findVotePosts.stream()
+                .map(votePost ->
+                        new VotePostPageResponse.VotePostPageSubResponse(
+                                votePost.getId(),
+                                votePost.getTitle(),
+                                votePost.getContent(),
+                                convertToVoteItemResponses(votePost),
+                                TagResponse.from(votePost.getVoteTag()),
+                                convertToVoteLabelResponses(votePost),
+                                votePost.getCreatedAt(),
+                                0L
+                        )
+                ).collect(Collectors.toList());
     }
 }

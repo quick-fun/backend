@@ -46,4 +46,12 @@ public class VoteTag {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "VoteTag{" +
+               "id=" + id +
+               ", tag=" + tag +
+               '}';
+    }
 }

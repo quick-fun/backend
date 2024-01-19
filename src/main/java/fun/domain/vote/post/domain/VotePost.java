@@ -14,8 +14,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 
@@ -45,7 +45,7 @@ public class VotePost extends BaseEntity {
     private List<VoteItem> voteItems = new ArrayList<>();
 
     @JoinColumn(name = "vote_tag_id")
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private VoteTag voteTag;
 
     @BatchSize(size = 100)

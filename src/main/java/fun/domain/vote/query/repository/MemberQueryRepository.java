@@ -1,4 +1,4 @@
-package fun.domain.vote.query;
+package fun.domain.vote.query.repository;
 
 import fun.domain.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
