@@ -1,5 +1,7 @@
 package fun.domain.vote.post.domain;
 
+import fun.common.BaseEntity;
+import fun.domain.vote.item.domain.VoteCount;
 import fun.domain.vote.item.domain.VoteItem;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -15,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +25,7 @@ import java.util.Objects;
 
 @Getter
 @Entity
-public class VotePost {
+public class VotePost extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +40,7 @@ public class VotePost {
     @Embedded
     private DueDate dueDate;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "votePostId", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<VoteItem> voteItems = new ArrayList<>();
 
@@ -44,6 +48,7 @@ public class VotePost {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private VoteTag voteTag;
 
+    @BatchSize(size = 100)
     @ElementCollection
     @CollectionTable(name = "vote_post_vote_label", joinColumns = @JoinColumn(name = "vote_post_id"))
     private List<Long> voteLabelIds = new ArrayList<>();
@@ -94,6 +99,17 @@ public class VotePost {
             requestVoteItem.assignVotePost(this.id);
         }
         this.voteItems.addAll(requestVoteItems);
+    }
+
+    public VoteCount getTotalVoteCount() {
+        return voteItems.stream()
+                .map(VoteItem::getVoteCount)
+                .reduce(VoteCount::plus)
+                .orElse(VoteCount.ZERO);
+    }
+
+    public void addVoteLabel(final Long requestVoteLabelId) {
+        this.voteLabelIds.add(requestVoteLabelId);
     }
 
     @Override

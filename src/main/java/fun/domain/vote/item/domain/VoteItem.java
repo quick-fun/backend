@@ -53,6 +53,10 @@ public class VoteItem {
         this.votePostId = requestVotePostId;
     }
 
+    public int divideVoteCountRate(final VoteCount requestVoteCount) {
+        return this.voteCount.divide(requestVoteCount);
+    }
+
     @Override
     public String toString() {
         return "VoteItem{" +
