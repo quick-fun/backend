@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class VotePostCommandControllerTest extends ControllerTestConfig {
 
-    @DisplayName("[SUCCESS] 소셜 인증 코드를 이용하여 회원가입[신규] 후 토큰(액세스, 리프래시)을 반환한다.")
+    @DisplayName("[SUCCESS] 투표 게시글을 생성한다.")
     @Test
     void success_createVotePost() throws Exception {
         // given
@@ -56,7 +56,6 @@ class VotePostCommandControllerTest extends ControllerTestConfig {
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrlPattern("/api/v1/posts/**"))
                 .andDo(restDocs.document(

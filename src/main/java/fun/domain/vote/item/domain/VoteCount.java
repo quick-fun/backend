@@ -13,13 +13,25 @@ public class VoteCount {
     public static final VoteCount ZERO = new VoteCount(0);
 
     @Column(name = "count", nullable = false)
-    private Integer value;
+    private int value;
 
     protected VoteCount() {
     }
 
-    public VoteCount(final Integer value) {
+    public VoteCount(final int value) {
         this.value = value;
+    }
+
+    public VoteCount plus(final VoteCount requestVoteCount) {
+        return new VoteCount(this.value + requestVoteCount.value);
+    }
+
+    public int divide(VoteCount target) {
+        if (value == 0) {
+            return 0;
+        }
+
+        return target.value / this.value;
     }
 
     @Override
@@ -33,5 +45,12 @@ public class VoteCount {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return "VoteCount{" +
+               "value=" + value +
+               '}';
     }
 }
