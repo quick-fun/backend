@@ -52,7 +52,7 @@ class CommentQueryServiceTest extends ServiceTestConfig {
         }
 
         // when
-        final CommentPageResponse actual = commentQueryService.pageComments(votePostId, 10L, 10L);
+        final CommentPageResponse actual = commentQueryService.pageComments(votePostId, 11L, 10L);
 
         // then
         assertThat(actual.data()).hasSize(10);
