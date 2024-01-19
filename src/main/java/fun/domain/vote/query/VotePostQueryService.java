@@ -36,7 +36,6 @@ public class VotePostQueryService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표 게시글 식별자값입니다."));
         final Member findMember = getMember(findVotePost.getMemberId());
 
-
         return new VotePostDetailResponse(
                 findVotePost.getId(),
                 findVotePost.getTitle(),
@@ -69,14 +68,14 @@ public class VotePostQueryService {
     }
 
     private Medal getMemberLatestMedal(final Member member) {
-        return medalQueryRepository.findById(member.getLatestMemberId())
+        return medalQueryRepository.findById(member.getLatestMedalId())
                 .orElse(Medal.DEFAULT_MEDAL);
     }
 
-    public VotePostPageResponse findVotePostPage(final Long cursor, final Long limit) {
+    public VotePostPageResponse pageVotePosts(final Long cursor, final Long limit) {
         return new VotePostPageResponse(
                 convertToVotePostPageResponse(
-                        votePostQueryRepository.findVotePostPage(cursor, limit)
+                        votePostQueryRepository.pageVotePosts(cursor, limit)
                 )
         );
     }

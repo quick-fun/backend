@@ -32,7 +32,7 @@ public class VotePostQueryController {
             @RequestParam final Long limit
     ) {
         return ResponseEntity.ok(
-                votePostQueryService.findVotePostPage(cursor, limit)
+                votePostQueryService.pageVotePosts(cursor, limit)
         );
     }
 }

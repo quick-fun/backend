@@ -16,5 +16,5 @@ public interface VotePostQueryRepository extends JpaRepository<VotePost, Long> {
         order by vp.id desc
         limit :limit
     """)
-    List<VotePost> findVotePostPage(@Param("cursor") final Long cursor, @Param("limit") final Long limit);
+    List<VotePost> pageVotePosts(@Param("cursor") final Long cursor, @Param("limit") final Long limit);
 }
