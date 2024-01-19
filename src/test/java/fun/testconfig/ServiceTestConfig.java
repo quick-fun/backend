@@ -4,6 +4,7 @@ import fun.config.JpaAuditingConfig;
 import fun.domain.auth.domain.AuthMemberRepository;
 import fun.domain.medal.domain.MedalCommandRepository;
 import fun.domain.member.domain.MemberCommandRepository;
+import fun.domain.vote.comment.domain.CommentCommandRepository;
 import fun.domain.vote.label.domain.VoteLabelCommandRepository;
 import fun.domain.vote.post.domain.VotePostCommandRepository;
 import fun.domain.vote.post.domain.VoteTagCommandRepository;
@@ -48,4 +49,7 @@ public abstract class ServiceTestConfig extends DomainValidatorTestConfig {
 
     @Autowired
     protected MedalQueryRepository medalQueryRepository;
+
+    @Autowired
+    protected CommentCommandRepository commentCommandRepository;
 }
