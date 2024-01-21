@@ -1,9 +1,12 @@
 package fun.domain.member.domain;
 
+import fun.common.BaseEntity;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +20,7 @@ import java.util.Objects;
 
 @Getter
 @Entity
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +40,12 @@ public class Member {
 
     @BatchSize(size = 100)
     @ElementCollection
-    @CollectionTable(name = "member_medal", joinColumns = @JoinColumn(name = "member_id"))
+    @CollectionTable(
+            name = "member_medal",
+            joinColumns = @JoinColumn(name = "member_id", nullable = false),
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)
+    )
+    @Column(name = "medal_id", nullable = false)
     private List<Long> medalIds = new ArrayList<>();
 
     protected Member() {
@@ -70,6 +78,12 @@ public class Member {
 
     public void addMedal(final Long requestMedalId) {
         medalIds.add(requestMedalId);
+    }
+
+    public void addMedals(final List<Long> requestMedalIds) {
+        requestMedalIds.stream()
+                .filter(requestMedalId -> !this.medalIds.contains(requestMedalIds))
+                .forEach(this::addMedal);
     }
 
     public Long getLatestMedalId() {

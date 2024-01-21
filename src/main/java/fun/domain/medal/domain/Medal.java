@@ -2,6 +2,8 @@ package fun.domain.medal.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,48 +11,32 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+import static fun.domain.medal.domain.MedalType.*;
+
 @Getter
 @Entity
 public class Medal {
 
-    public static final Medal DEFAULT_MEDAL = new Medal("뉴비", "뉴비", "뉴비");
+    public static final Medal DEFAULT_MEDAL = new Medal(NEW_MEMBER);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false)
-    private String title;
-
-    @Column(name = "content", nullable = false)
-    private String content;
-
-    @Column(name = "acquisition_condition", nullable = false)
-    private String acquisitionCondition;
+    @Column(name = "title")
+    @Enumerated(value = EnumType.STRING)
+    private MedalType medalType;
 
     protected Medal() {
     }
 
-    public Medal(
-            final String title,
-            final String content,
-            final String acquisitionCondition
-    ) {
-        this.title = title;
-        this.content = content;
-        this.acquisitionCondition = acquisitionCondition;
+    public Medal(final MedalType medalType) {
+        this(null, medalType);
     }
 
-    protected Medal(
-            final Long id,
-            final String title,
-            final String content,
-            final String acquisitionCondition
-    ) {
+    protected Medal(final Long id, final MedalType medalType) {
         this.id = id;
-        this.title = title;
-        this.content = content;
-        this.acquisitionCondition = acquisitionCondition;
+        this.medalType = medalType;
     }
 
     @Override
@@ -70,9 +56,7 @@ public class Medal {
     public String toString() {
         return "Medal{" +
                "id=" + id +
-               ", title='" + title + '\'' +
-               ", content='" + content + '\'' +
-               ", acquisitionCondition='" + acquisitionCondition + '\'' +
+               ", medalType=" + medalType +
                '}';
     }
 }

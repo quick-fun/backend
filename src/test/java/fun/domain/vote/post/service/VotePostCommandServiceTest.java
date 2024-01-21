@@ -2,15 +2,16 @@ package fun.domain.vote.post.service;
 
 import fun.common.auth.AuthAccessToken;
 import fun.domain.member.domain.Member;
-import fun.domain.vote.post.domain.VotePost;
 import fun.domain.vote.post.domain.Tag;
-import fun.domain.vote.post.service.VotePostCommandService;
-import fun.domain.vote.post.service.request.CreateVotePostRequest;
+import fun.domain.vote.post.domain.VotePost;
 import fun.domain.vote.post.domain.VoteTag;
+import fun.domain.vote.post.service.request.CreateVotePostRequest;
 import fun.testconfig.ServiceTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,12 +25,16 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
 
     private VotePostCommandService votePostCommandService;
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @BeforeEach
     void setUp() {
         votePostCommandService = new VotePostCommandService(
                 votePostCommandRepository,
                 voteTagCommandRepository,
-                voteAssignHostValidator
+                voteAssignHostValidator,
+                 applicationEventPublisher
         );
     }
 

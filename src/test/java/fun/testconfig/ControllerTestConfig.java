@@ -14,6 +14,8 @@ import fun.domain.auth.service.AuthCommandService;
 import fun.domain.auth.service.AuthQueryService;
 import fun.domain.vote.comment.controller.CommentCommandController;
 import fun.domain.vote.comment.service.CommentCommandService;
+import fun.domain.vote.item.controller.VoteItemCommandController;
+import fun.domain.vote.item.service.VoteItemCommandService;
 import fun.domain.vote.post.controller.VotePostCommandController;
 import fun.domain.vote.post.service.VotePostCommandService;
 import fun.domain.vote.query.CommentQueryController;
@@ -49,7 +51,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
         VotePostCommandController.class,
         VotePostQueryController.class,
         CommentCommandController.class,
-        CommentQueryController.class
+        CommentQueryController.class,
+        VoteItemCommandController.class
 })
 @Import({
         RestDocsConfig.class,
@@ -85,6 +88,9 @@ public abstract class ControllerTestConfig {
 
     @MockBean
     protected CommentQueryService commentQueryService;
+
+    @MockBean
+    protected VoteItemCommandService voteItemCommandService;
 
     @Autowired
     private AccessTokenVerifier accessTokenVerifier;

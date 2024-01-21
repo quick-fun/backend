@@ -1,6 +1,7 @@
 package fun.domain.vote.query;
 
 import fun.domain.medal.domain.Medal;
+import fun.domain.medal.domain.MedalType;
 import fun.domain.member.domain.Member;
 import fun.domain.vote.comment.domain.Comment;
 import fun.domain.vote.query.response.CommentPageResponse;
@@ -38,11 +39,7 @@ class CommentQueryServiceTest extends ServiceTestConfig {
         );
 
         final Medal expectedMedal = medalCommandRepository.save(
-                new Medal(
-                        "메달명",
-                        "메달 내용",
-                        "메달 획득 조건"
-                )
+                new Medal(MedalType.NEW_MEMBER)
         );
         expectedMember.addMedal(expectedMedal.getId());
 

@@ -1,4 +1,4 @@
-package fun.domain.vote.query;
+package fun.domain.vote.item.service;
 
 import fun.domain.medal.domain.Medal;
 import fun.domain.medal.domain.MedalType;
@@ -10,13 +10,6 @@ import fun.domain.vote.post.domain.Tag;
 import fun.domain.vote.post.domain.VoteAssignHostValidatorSuccessStub;
 import fun.domain.vote.post.domain.VotePost;
 import fun.domain.vote.post.domain.VoteTag;
-import fun.domain.vote.query.response.MemberProfileResponse;
-import fun.domain.vote.query.response.TagResponse;
-import fun.domain.vote.query.response.VoteItemResponse;
-import fun.domain.vote.query.response.VoteLabelResponse;
-import fun.domain.vote.query.response.VotePostDetailResponse;
-import fun.domain.vote.query.response.VotePostPageResponse;
-import fun.domain.vote.query.support.VoteItemRateSupport;
 import fun.testconfig.ServiceTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,28 +17,26 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class VotePostQueryServiceTest extends ServiceTestConfig {
+class VoteItemCommandServiceConcurrencyTest extends ServiceTestConfig {
 
-    private VotePostQueryService votePostQueryService;
+    private VoteItemCommandService voteItemCommandService;
 
     @BeforeEach
     void setUp() {
-        votePostQueryService = new VotePostQueryService(
-                votePostQueryRepository,
-                voteLabelQueryRepository,
-                memberQueryRepository,
-                medalQueryRepository
+        voteItemCommandService = new VoteItemCommandService(
+                voteItemCommandRepository,
+                voteItemVoteValidator,
+                eventPublisher
         );
     }
 
-    @DisplayName("[SUCCESS] 투표 게시글을 상세 조회한다.")
+    @DisplayName("[SUCCESS] 투표 항목에 투표한다.")
     @Test
-    void success_findVotePostDetailByVotePostId() {
+    void success_voteVoteItem() {
         // given
         final Medal expectedMedal = medalCommandRepository.save(
                 new Medal(MedalType.NEW_MEMBER)
@@ -73,9 +64,8 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
                 )
         );
 
-        final List<VoteItem> voteItems = List.of(
-                new VoteItem("투표 항목 내용")
-        );
+        final VoteItem voteItem = new VoteItem("투표 항목 내용");
+        final List<VoteItem> voteItems = List.of(voteItem);
 
         final VotePost expectedVotePost = votePostCommandRepository.save(
                 new VotePost(
@@ -90,38 +80,26 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
         expectedVotePost.addVoteItems(voteItems);
         votePostCommandRepository.flush();
 
-
         // when
-        final VotePostDetailResponse actual = votePostQueryService.findVotePostDetailByVotePostId(expectedVotePost.getId());
+        final Long actual = voteItemCommandService.voteVoteItem(
+                expectedMember.getId(),
+                expectedVotePost.getId(),
+                voteItem.getId()
+        );
 
         // then
-        assertSoftly(softly -> {
-            softly.assertThat(actual.votePostId()).isEqualTo(expectedVotePost.getId());
-            softly.assertThat(actual.title()).isEqualTo(expectedVotePost.getTitle());
-            softly.assertThat(actual.content()).isEqualTo(expectedVotePost.getContent());
-            softly.assertThat(actual.voteItems()).isEqualTo(convertToVoteItemResponse(expectedVotePost));
-            softly.assertThat(actual.tag()).isEqualTo(TagResponse.from(expectedVotePost.getVoteTag()));
-            softly.assertThat(actual.labels()).containsExactly(VoteLabelResponse.from(expectedVoteLabel));
-            softly.assertThat(actual.profile()).isEqualTo(MemberProfileResponse.from(expectedMember, expectedMedal));
-        });
+        assertThat(actual).isPositive();
     }
 
-    private List<VoteItemResponse> convertToVoteItemResponse(final VotePost expectedVotePost) {
-        return expectedVotePost.getVoteItems()
-                .stream()
-                .map(voteItem -> VoteItemResponse.from(voteItem, new VoteItemRateSupport(expectedVotePost)))
-                .collect(Collectors.toList());
-    }
-
-    @DisplayName("[SUCCESS] 투표 게시글 페이징 목록을 조회한다.")
+    @DisplayName("[SUCCESS] 투표 게시글에 사용자가 투표한 기록이 있다면 투표 항목에 투표할 수 없다.")
     @Test
-    void success_findVotePostPage() {
+    void exception_voteVoteItem_memberHasVotedBefore() {
         // given
-        final Medal expectedMedal = medalCommandRepository.saveAndFlush(
+        final Medal expectedMedal = medalCommandRepository.save(
                 new Medal(MedalType.NEW_MEMBER)
         );
 
-        final Member expectedMember = memberCommandRepository.saveAndFlush(
+        final Member expectedMember = memberCommandRepository.save(
                 new Member(
                         "사용자 닉네임",
                         "성별",
@@ -131,30 +109,21 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
         );
         expectedMember.addMedal(expectedMedal.getId());
 
-        final VoteLabel expectedVoteLabel = voteLabelCommandRepository.saveAndFlush(
+        final VoteLabel expectedVoteLabel = voteLabelCommandRepository.save(
                 new VoteLabel(
                         "라벨명"
                 )
         );
 
-        final VoteTag expectedVoteTag = voteTagCommandRepository.saveAndFlush(
+        final VoteTag expectedVoteTag = voteTagCommandRepository.save(
                 new VoteTag(
                         Tag.SCIENCE.SCIENCE
                 )
         );
 
-        for (int count = 0; count < 10; count++) {
-            saveVotePost(expectedVoteTag, expectedMember, expectedVoteLabel, List.of(new VoteItem("투표 항목 내용")));
-        }
+        final VoteItem voteItem = new VoteItem("투표 항목 내용");
+        final List<VoteItem> voteItems = List.of(voteItem);
 
-        // when
-        final VotePostPageResponse actual = votePostQueryService.pageVotePosts(11L, 10L);
-
-        // then
-        assertThat(actual.data()).hasSize(10);
-    }
-
-    private VotePost saveVotePost(final VoteTag expectedVoteTag, final Member expectedMember, final VoteLabel expectedVoteLabel, final List<VoteItem> voteItems) {
         final VotePost expectedVotePost = votePostCommandRepository.save(
                 new VotePost(
                         "투표 게시글 제목",
@@ -167,6 +136,21 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
         expectedVotePost.addVoteLabel(expectedVoteLabel.getId());
         expectedVotePost.addVoteItems(voteItems);
         votePostCommandRepository.flush();
-        return expectedVotePost;
+
+        // when
+        voteItemCommandService.voteVoteItem(
+                expectedMember.getId(),
+                expectedVotePost.getId(),
+                voteItem.getId()
+        );
+
+        // then
+        assertThatThrownBy(() ->
+                voteItemCommandService.voteVoteItem(
+                        expectedMember.getId(),
+                        expectedVotePost.getId(),
+                        voteItem.getId()
+                )
+        ).isInstanceOf(IllegalStateException.class);
     }
 }
