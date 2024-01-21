@@ -7,8 +7,10 @@ import fun.domain.vote.post.domain.VotePost;
 import fun.domain.vote.post.domain.VotePostCommandRepository;
 import fun.domain.vote.post.domain.VoteTag;
 import fun.domain.vote.post.domain.VoteTagCommandRepository;
+import fun.domain.vote.post.service.event.VotePostCreateEvent;
 import fun.domain.vote.post.service.request.CreateVotePostRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class VotePostCommandService {
     private final VotePostCommandRepository votePostCommandRepository;
     private final VoteTagCommandRepository voteTagCommandRepository;
     private final VoteAssignHostValidator voteAssignHostValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Long createVotePost(
             final Long requestMemberId,
@@ -41,6 +44,8 @@ public class VotePostCommandService {
 
         savedVotePost.assignHost(requestMemberId, voteAssignHostValidator);
         savedVotePost.addVoteItems(convertToVoteItems(votePostRequest.voteItemTitles()));
+
+        eventPublisher.publishEvent(new VotePostCreateEvent(requestMemberId, savedVotePost.getId()));
 
         return savedVotePost.getId();
     }

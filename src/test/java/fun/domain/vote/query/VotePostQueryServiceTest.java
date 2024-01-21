@@ -1,6 +1,7 @@
 package fun.domain.vote.query;
 
 import fun.domain.medal.domain.Medal;
+import fun.domain.medal.domain.MedalType;
 import fun.domain.member.domain.Member;
 import fun.domain.vote.item.domain.VoteItem;
 import fun.domain.vote.label.domain.VoteLabel;
@@ -47,11 +48,7 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
     void success_findVotePostDetailByVotePostId() {
         // given
         final Medal expectedMedal = medalCommandRepository.save(
-                new Medal(
-                        "메달명",
-                        "메달 내용",
-                        "메달 습득 조건 설명"
-                )
+                new Medal(MedalType.NEW_MEMBER)
         );
 
         final Member expectedMember = memberCommandRepository.save(
@@ -121,11 +118,7 @@ class VotePostQueryServiceTest extends ServiceTestConfig {
     void success_findVotePostPage() {
         // given
         final Medal expectedMedal = medalCommandRepository.saveAndFlush(
-                new Medal(
-                        "메달명",
-                        "메달 내용",
-                        "메달 습득 조건 설명"
-                )
+                new Medal(MedalType.NEW_MEMBER)
         );
 
         final Member expectedMember = memberCommandRepository.saveAndFlush(
