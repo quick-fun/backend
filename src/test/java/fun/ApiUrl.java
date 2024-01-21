@@ -10,6 +10,10 @@ public final class ApiUrl {
     public static final String GET_VOTE_POST_PAGE = "/api/v1/posts";
     public static final String POST_VOTE_POST_CREATE = "/api/v1/posts";
 
+    /** VOTE_ITEM **/
+    public static final String POST_VOTE_VOTE_ITEM = "/api/v1/posts/{votePostId}/items/{voteItemId}";
+
+
     /**
      * COMMENT
      **/

@@ -25,6 +25,7 @@ public class VoteItemCommandService {
     ) {
         final VoteItem findVoteItem = voteItemCommandRepository.findByIdOptimisticLock(voteItemId);
         findVoteItem.vote(memberId, votePostId, voteItemVoteValidator);
+
         eventPublisher.publishEvent(new VoteItemVoteEvent(memberId, findVoteItem.getId(), votePostId));
 
         return findVoteItem.getId();

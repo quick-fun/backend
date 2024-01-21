@@ -1,22 +1,20 @@
 package fun.domain.vote.item.domain;
 
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Version;
 import lombok.Getter;
-import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -35,15 +33,8 @@ public class VoteItem {
     @JoinColumn(name = "vote_post_id", nullable = false)
     private Long votePostId;
 
-    @BatchSize(size = 100)
-    @ElementCollection
-    @CollectionTable(
-            name = "vote_item_member",
-            joinColumns = @JoinColumn(name = "vote_item_id", nullable = false),
-            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)
-    )
-    @Column(name = "member_id", nullable = false)
-    private List<Long> votedMemberIds = new ArrayList<>();
+    @OneToMany(mappedBy = "voteItemId", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<VoteItemMember> voteItemMembers = new ArrayList<>();
 
     @Version
     private Long version;
@@ -60,14 +51,14 @@ public class VoteItem {
             final String content,
             final VoteCount voteCount,
             final Long votePostId,
-            final List<Long> votedMemberIds,
+            final List<VoteItemMember> voteItemMembers,
             final Long version
     ) {
         this.id = id;
         this.content = content;
         this.voteCount = voteCount;
         this.votePostId = votePostId;
-        this.votedMemberIds = votedMemberIds;
+        this.voteItemMembers = voteItemMembers;
         this.version = version;
     }
 
@@ -89,12 +80,25 @@ public class VoteItem {
             final VoteItemVoteValidator voteItemVoteValidator
     ) {
         voteItemVoteValidator.validate(memberId, votePostId);
-        this.votedMemberIds.add(memberId);
+        this.voteItemMembers.add(new VoteItemMember(memberId, votePostId));
         this.voteCount = voteCount.increase();
     }
 
     boolean checkMemberVotedBefore(final Long memberId) {
-        return votedMemberIds.contains(memberId);
+        return voteItemMembers.contains(memberId);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final VoteItem voteItem = (VoteItem) o;
+        return Objects.equals(id, voteItem.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
@@ -104,6 +108,8 @@ public class VoteItem {
                ", content='" + content + '\'' +
                ", voteCount=" + voteCount +
                ", votePostId=" + votePostId +
+               ", voteItemMembers=" + voteItemMembers +
+               ", version=" + version +
                '}';
     }
 }
