@@ -34,6 +34,10 @@ public class VoteCount {
         return target.value / this.value;
     }
 
+    public VoteCount increase() {
+        return new VoteCount(this.value + 1);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

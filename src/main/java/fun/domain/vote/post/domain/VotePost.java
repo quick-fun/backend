@@ -6,10 +6,12 @@ import fun.domain.vote.item.domain.VoteItem;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -44,13 +46,20 @@ public class VotePost extends BaseEntity {
     @OneToMany(mappedBy = "votePostId", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<VoteItem> voteItems = new ArrayList<>();
 
-    @JoinColumn(name = "vote_tag_id")
+    @JoinColumn(
+            name = "vote_tag_id",
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)
+    )
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private VoteTag voteTag;
 
-    @BatchSize(size = 100)
     @ElementCollection
-    @CollectionTable(name = "vote_post_vote_label", joinColumns = @JoinColumn(name = "vote_post_id"))
+    @CollectionTable(
+            name = "vote_post_vote_label",
+            joinColumns = @JoinColumn(name = "vote_post_id", nullable = false),
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)
+    )
+    @Column(name = "vote_label_id", nullable = false)
     private List<Long> voteLabelIds = new ArrayList<>();
 
     @Column(name = "member_id")
