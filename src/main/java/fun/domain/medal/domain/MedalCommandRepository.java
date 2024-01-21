@@ -13,5 +13,5 @@ public interface MedalCommandRepository extends JpaRepository<Medal, Long> {
                 from Medal m
                 where m.medalType in :medalTypes
             """)
-    List<Medal> findByMedalTypes(@Param("medalType") final List<MedalType> medalTypes);
+    List<Medal> findByMedalTypes(@Param("medalTypes") final List<MedalType> medalTypes);
 }
