@@ -1,6 +1,5 @@
 package fun.domain.medal.domain.acquirable;
 
-import fun.domain.medal.domain.MedalType;
 import fun.domain.member.domain.Member;
 import fun.domain.member.domain.MemberCommandRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +26,5 @@ public class MedalAcquirableNewMember implements MedalAcquirable {
         final LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
 
         return yesterday.isBefore(memberCreatedAt);
-    }
-
-    @Override
-    public MedalType getMedalType() {
-        return MedalType.NEW_MEMBER;
     }
 }

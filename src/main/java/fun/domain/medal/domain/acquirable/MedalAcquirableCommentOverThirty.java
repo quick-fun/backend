@@ -1,13 +1,12 @@
 package fun.domain.medal.domain.acquirable;
 
-import fun.domain.medal.domain.MedalType;
 import fun.domain.vote.comment.domain.CommentCommandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class MedalAcquirableCommentOverThirty implements MedalAcquirable{
+public class MedalAcquirableCommentOverThirty implements MedalAcquirable {
 
     private final CommentCommandRepository commentCommandRepository;
 
@@ -18,10 +17,5 @@ public class MedalAcquirableCommentOverThirty implements MedalAcquirable{
         }
 
         return commentCommandRepository.countByMemberId(medalCheckForm.memberId()) >= 30;
-    }
-
-    @Override
-    public MedalType getMedalType() {
-        return MedalType.COMMENT_OVER_THIRTY;
     }
 }

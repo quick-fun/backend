@@ -6,5 +6,7 @@ public interface MedalAcquirable {
 
     boolean checkAcquirable(final MedalCheckForm medalCheckForm);
 
-    MedalType getMedalType();
+    default MedalType getMedalType() {
+        return MedalType.getMedalType(this.getClass());
+    }
 }
