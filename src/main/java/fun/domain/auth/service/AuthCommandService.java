@@ -7,6 +7,7 @@ import fun.domain.auth.domain.AuthSocialType;
 import fun.domain.auth.domain.RefreshToken;
 import fun.domain.auth.domain.RefreshTokenSigner;
 import fun.domain.auth.domain.SocialAccessToken;
+import fun.domain.auth.service.event.MemberCreateEvent;
 import fun.domain.auth.service.response.TokenResponse;
 import fun.domain.auth.service.token.SocialAccessTokenDto;
 import fun.domain.auth.service.token.SocialAccessTokenProviderComposite;
@@ -14,6 +15,7 @@ import fun.domain.auth.service.token.SocialProfileDto;
 import fun.domain.member.domain.Member;
 import fun.domain.member.domain.MemberCommandRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class AuthCommandService {
     private final RefreshTokenSigner refreshTokenSigner;
     private final AuthMemberRepository authMemberRepository;
     private final MemberCommandRepository memberCommandRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public TokenResponse createTokens(final AuthSocialType authSocialType, final String authCode) {
         final SocialAccessTokenDto socialAccessTokenDto = socialAccessTokenProviderComposite.getSocialAccessToken(authSocialType, authCode);
@@ -42,7 +45,11 @@ public class AuthCommandService {
 
         final Member savedMember = createNewMember(socialProfile);
         final AuthMember savedAuthMember = createNewAuthMember(authSocialType, socialProfile, socialAccessTokenDto, savedMember);
-        return createTokenResponse(savedAuthMember);
+        final TokenResponse tokenResponse = createTokenResponse(savedAuthMember);
+
+        eventPublisher.publishEvent(new MemberCreateEvent(savedMember.getId()));
+
+        return tokenResponse;
     }
 
     private Member createNewMember(final SocialProfileDto socialProfile) {

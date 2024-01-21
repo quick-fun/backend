@@ -1,6 +1,5 @@
 package fun.domain.auth.service;
 
-import fun.domain.auth.service.AuthCommandService;
 import fun.domain.auth.domain.AccessTokenSignerStub;
 import fun.domain.auth.domain.AuthMember;
 import fun.domain.auth.domain.AuthSocialType;
@@ -27,7 +26,8 @@ class AuthCommandServiceTest extends ServiceTestConfig {
                 new AccessTokenSignerStub(),
                 new RefreshTokenSignerStub(),
                 authMemberRepository,
-                memberCommandRepository
+                memberCommandRepository,
+                eventPublisher
         );
     }
 
