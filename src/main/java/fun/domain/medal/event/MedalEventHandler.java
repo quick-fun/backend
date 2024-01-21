@@ -8,6 +8,8 @@ import fun.domain.medal.domain.acquirable.MedalAcquirableComposite;
 import fun.domain.medal.domain.acquirable.MedalCheckForm;
 import fun.domain.member.domain.Member;
 import fun.domain.member.domain.MemberCommandRepository;
+import fun.domain.vote.comment.service.event.CommentCreateEvent;
+import fun.domain.vote.item.service.event.VoteItemVoteEvent;
 import fun.domain.vote.post.service.event.VotePostCreateEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -36,11 +38,11 @@ public class MedalEventHandler {
         findAcquirableMedalsAndSaveNewMedalsForMember(event.memberId(), event.votePostId());
     }
 
-    private void findAcquirableMedalsAndSaveNewMedalsForMember(final Long event, final Long event1) {
-        final Member findMember = getMemberOrException(event);
+    private void findAcquirableMedalsAndSaveNewMedalsForMember(final Long memberId, final Long votePostId) {
+        final Member findMember = getMemberOrException(memberId);
         findMember.addMedals(
                 collectMedalIds(
-                        medalCommandRepository.findByMedalTypes(getAcquirableMedalTypes(event, event1))
+                        medalCommandRepository.findByMedalTypes(getAcquirableMedalTypes(memberId, votePostId))
                 )
         );
     }
@@ -70,5 +72,19 @@ public class MedalEventHandler {
     @Async
     public void createMedalBySocialMemberJoinFirstTime(final MemberCreateEvent event) {
         findAcquirableMedalsAndSaveNewMedalsForMember(event.memberId(), null);
+    }
+
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    @Async
+    public void createMedalByVoteItemVoteCount(final VoteItemVoteEvent event) {
+        findAcquirableMedalsAndSaveNewMedalsForMember(event.memberId(), event.votePostId());
+    }
+
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    @Async
+    public void createMedalByVoteItemVoteCount(final CommentCreateEvent event) {
+        findAcquirableMedalsAndSaveNewMedalsForMember(event.memberId(), event.votePostId());
     }
 }
