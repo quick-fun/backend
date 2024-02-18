@@ -1,5 +1,7 @@
 package fun.domain.vote.query;
 
+import fun.common.auth.AuthAccessToken;
+import fun.domain.auth.config.argument.AuthAccessPrinciple;
 import fun.domain.vote.query.response.VotePostDetailResponse;
 import fun.domain.vote.query.response.VotePostPageResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,20 +21,33 @@ public class VotePostQueryController {
 
     @GetMapping("/{votePostId}")
     ResponseEntity<VotePostDetailResponse> readVotePostDetailByVotePostId(
+            @AuthAccessPrinciple final AuthAccessToken authAccessToken,
             @PathVariable final Long votePostId
     ) {
         return ResponseEntity.ok(
-                votePostQueryService.findVotePostDetailByVotePostId(votePostId)
+                votePostQueryService.findVotePostDetailByVotePostId(authAccessToken.memberId(), votePostId)
         );
     }
 
     @GetMapping
     ResponseEntity<VotePostPageResponse> readVotePostPage(
+            @AuthAccessPrinciple final AuthAccessToken authAccessToken,
             @RequestParam final Long cursor,
             @RequestParam final Long limit
     ) {
         return ResponseEntity.ok(
-                votePostQueryService.pageVotePosts(cursor, limit)
+                getVotePostPageResponse(authAccessToken, cursor, limit)
         );
+    }
+
+    private VotePostPageResponse getVotePostPageResponse(
+            @AuthAccessPrinciple final AuthAccessToken authAccessToken,
+            @RequestParam final Long cursor,
+            @RequestParam final Long limit
+    ) {
+        if (authAccessToken.isLoginMember()) {
+            return votePostQueryService.pageVotePostsForLoginMember(authAccessToken.memberId(), cursor, limit);
+        }
+        return votePostQueryService.pageVotePostsForAnonymousMember(authAccessToken.anonymousMemberId(), cursor, limit);
     }
 }

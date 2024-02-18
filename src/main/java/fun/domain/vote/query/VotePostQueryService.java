@@ -31,10 +31,18 @@ public class VotePostQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final MedalQueryRepository medalQueryRepository;
 
-    public VotePostDetailResponse findVotePostDetailByVotePostId(final Long votePostId) {
+    public VotePostDetailResponse findVotePostDetailByVotePostId(
+            final Long memberId,
+            final Long votePostId
+    ) {
         final VotePost findVotePost = votePostQueryRepository.findById(votePostId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표 게시글 식별자값입니다."));
-        final Member findMember = getMember(findVotePost.getMemberId());
+        final Member owner = getMember(findVotePost.getMemberId());
+
+        final boolean isVotedBefore = findVotePost.checkVotedBeforeForMember(memberId);
+        if (!isVotedBefore) {
+            throw new IllegalArgumentException("투표 게시글에 투표한 기록이 없어 상세 게시글을 볼 수 없습니다.");
+        }
 
         return new VotePostDetailResponse(
                 findVotePost.getId(),
@@ -44,14 +52,14 @@ public class VotePostQueryService {
                 TagResponse.from(findVotePost.getVoteTag()),
                 convertToVoteLabelResponses(findVotePost),
                 findVotePost.getCreatedAt(),
-                MemberProfileResponse.from(findMember, getMemberLatestMedal(findMember))
+                MemberProfileResponse.from(owner, getMemberLatestMedal(owner))
         );
     }
 
     private List<VoteItemResponse> convertToVoteItemResponses(final VotePost votePost) {
         return votePost.getVoteItems()
                 .stream()
-                .map(voteItem -> VoteItemResponse.from(voteItem, new VoteItemRateSupport(votePost)))
+                .map(voteItem -> VoteItemResponse.createVisibleRate(voteItem, new VoteItemRateSupport(votePost)))
                 .collect(Collectors.toList());
     }
 
@@ -72,27 +80,67 @@ public class VotePostQueryService {
                 .orElse(Medal.DEFAULT_MEDAL);
     }
 
-    public VotePostPageResponse pageVotePosts(final Long cursor, final Long limit) {
-        return new VotePostPageResponse(
-                convertToVotePostPageResponse(
-                        votePostQueryRepository.pageVotePosts(cursor, limit)
-                )
+    public VotePostPageResponse pageVotePostsForLoginMember(final Long memberId, final Long cursor, final Long limit) {
+        final List<VotePost> findVotePosts = votePostQueryRepository.pageVotePosts(cursor, limit);
+        final List<VotePostPageResponse.VotePostPageSubResponse> convertedVotePostPageSubResponse = findVotePosts.stream()
+                .map(votePost -> {
+                    final List<VoteItemResponse> voteItemsResponse = collectVoteItemResponseForLoginMember(memberId, votePost);
+
+                    return convertToVotePostPageSubResponse(votePost, voteItemsResponse);
+                }).collect(Collectors.toList());
+
+
+        return new VotePostPageResponse(convertedVotePostPageSubResponse);
+    }
+
+    private List<VoteItemResponse> collectVoteItemResponseForLoginMember(final Long memberId, final VotePost votePost) {
+        return votePost.getVoteItems()
+                .stream()
+                .map(voteItem -> {
+                    if (voteItem.checkMemberVotedBefore(memberId)) {
+                        return VoteItemResponse.createInvisibleRate(voteItem);
+                    }
+                    return VoteItemResponse.createVisibleRate(voteItem, new VoteItemRateSupport(votePost));
+                }).collect(Collectors.toList());
+    }
+
+    private VotePostPageResponse.VotePostPageSubResponse convertToVotePostPageSubResponse(
+            final VotePost votePost,
+            final List<VoteItemResponse> voteItemsResponse
+    ) {
+        return new VotePostPageResponse.VotePostPageSubResponse(
+                votePost.getId(),
+                votePost.getTitle(),
+                votePost.getContent(),
+                voteItemsResponse,
+                TagResponse.from(votePost.getVoteTag()),
+                convertToVoteLabelResponses(votePost),
+                votePost.getCreatedAt(),
+                0L
         );
     }
 
-    private List<VotePostPageResponse.VotePostPageSubResponse> convertToVotePostPageResponse(final List<VotePost> findVotePosts) {
-        return findVotePosts.stream()
-                .map(votePost ->
-                        new VotePostPageResponse.VotePostPageSubResponse(
-                                votePost.getId(),
-                                votePost.getTitle(),
-                                votePost.getContent(),
-                                convertToVoteItemResponses(votePost),
-                                TagResponse.from(votePost.getVoteTag()),
-                                convertToVoteLabelResponses(votePost),
-                                votePost.getCreatedAt(),
-                                0L
-                        )
-                ).collect(Collectors.toList());
+    public VotePostPageResponse pageVotePostsForAnonymousMember(final Long anonymousMemberId, final Long cursor, final Long limit) {
+        final List<VotePost> findVotePosts = votePostQueryRepository.pageVotePosts(cursor, limit);
+        final List<VotePostPageResponse.VotePostPageSubResponse> convertedVotePostPageSubResponse = findVotePosts.stream()
+                .map(votePost -> {
+                    final List<VoteItemResponse> voteItemsResponse = collectVoteItemResponseForAnonymousMember(anonymousMemberId, votePost);
+
+                    return convertToVotePostPageSubResponse(votePost, voteItemsResponse);
+                }).collect(Collectors.toList());
+
+
+        return new VotePostPageResponse(convertedVotePostPageSubResponse);
+    }
+
+    private List<VoteItemResponse> collectVoteItemResponseForAnonymousMember(final Long memberId, final VotePost votePost) {
+        return votePost.getVoteItems()
+                .stream()
+                .map(voteItem -> {
+                    if (voteItem.checkAnonymousMemberVotedBefore(memberId)) {
+                        return VoteItemResponse.createInvisibleRate(voteItem);
+                    }
+                    return VoteItemResponse.createVisibleRate(voteItem, new VoteItemRateSupport(votePost));
+                }).collect(Collectors.toList());
     }
 }
