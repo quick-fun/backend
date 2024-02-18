@@ -31,7 +31,7 @@ class CommentCommandControllerTest extends ControllerTestConfig {
         final CreateCommentRequest createCommentRequest = new CreateCommentRequest("댓글 내용");
 
         // when
-        mockingAuthAccessToken(new AuthAccessToken(1L));
+        mockingAuthAccessToken(new AuthAccessToken(1L, null));
         when(
                 commentCommandService.createComment(
                         anyLong(),

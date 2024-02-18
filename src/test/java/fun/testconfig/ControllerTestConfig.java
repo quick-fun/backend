@@ -22,8 +22,8 @@ import fun.domain.vote.query.CommentQueryController;
 import fun.domain.vote.query.CommentQueryService;
 import fun.domain.vote.query.VotePostQueryController;
 import fun.domain.vote.query.VotePostQueryService;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -40,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.when;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -56,7 +57,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 })
 @Import({
         RestDocsConfig.class,
-        TokenVerifierTestConfig.class
+        TokenVerifierTestConfig.class,
 })
 public abstract class ControllerTestConfig {
 
@@ -147,11 +148,11 @@ class TokenVerifierTestConfig {
 
     @Bean
     AccessTokenVerifier accessTokenVerifier() {
-        return Mockito.mock(AccessTokenVerifier.class);
+        return mock(AccessTokenVerifier.class);
     }
 
     @Bean
     RefreshTokenVerifier refreshTokenVerifier() {
-        return Mockito.mock(RefreshTokenVerifier.class);
+        return mock(RefreshTokenVerifier.class);
     }
 }

@@ -33,4 +33,21 @@ public class VoteItemVoteValidator {
                 .stream()
                 .anyMatch(voteItem -> voteItem.checkMemberVotedBefore(memberId));
     }
+
+    public void validateAnonymous(final Long anonymousMemberId, final Long votePostId) {
+        validateVotePostExists(votePostId);
+        validateMemberVotedBefore(votePostId, anonymousMemberId);
+    }
+
+    private void validateAnonymousVotedBefore(final Long votePostId, final Long memberId) {
+        if (isAnonymousVotedBefore(votePostId, memberId)) {
+            throw new IllegalStateException("이미 익명 사용자는 투표 게시글의 투표 항목 중 하나에 투표한 결과가 있습니다.");
+        }
+    }
+
+    private boolean isAnonymousVotedBefore(final Long votePostId, final Long memberId) {
+        return voteItemCommandRepository.findByVotePostId(votePostId)
+                .stream()
+                .anyMatch(voteItem -> voteItem.checkMemberVotedBefore(memberId));
+    }
 }

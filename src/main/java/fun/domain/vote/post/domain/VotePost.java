@@ -145,6 +145,6 @@ public class VotePost extends BaseEntity {
                ", voteTag=" + voteTag +
                ", voteLabelIds=" + voteLabelIds +
                ", memberId=" + memberId +
-               '}';
+               "}";
     }
 }

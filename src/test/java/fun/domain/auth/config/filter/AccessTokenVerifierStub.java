@@ -1,7 +1,10 @@
 package fun.domain.auth.config.filter;
 
+import org.springframework.context.annotation.Profile;
+
 import java.util.UUID;
 
+@Profile("test")
 class AccessTokenVerifierStub implements AccessTokenVerifier{
 
     static final String ONE_ACCESS_TOKEN = UUID.randomUUID().toString();

@@ -52,6 +52,6 @@ public class VoteTag {
         return "VoteTag{" +
                "id=" + id +
                ", tag=" + tag +
-               '}';
+               "}";
     }
 }
