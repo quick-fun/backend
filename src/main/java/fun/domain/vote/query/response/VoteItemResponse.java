@@ -1,7 +1,7 @@
 package fun.domain.vote.query.response;
 
 import fun.domain.vote.item.domain.VoteItem;
-import fun.domain.vote.query.support.VoteItemRateSupport;
+import fun.domain.vote.support.VoteItemRateSupport;
 
 public record VoteItemResponse(
         Long voteItemId,

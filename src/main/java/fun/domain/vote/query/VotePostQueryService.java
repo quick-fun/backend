@@ -13,7 +13,7 @@ import fun.domain.vote.query.response.VoteItemResponse;
 import fun.domain.vote.query.response.VoteLabelResponse;
 import fun.domain.vote.query.response.VotePostDetailResponse;
 import fun.domain.vote.query.response.VotePostPageResponse;
-import fun.domain.vote.query.support.VoteItemRateSupport;
+import fun.domain.vote.support.VoteItemRateSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -15,7 +15,7 @@ interface VoteItemCommandRepository : JpaRepository<VoteItem, Long> {
         where vi.id = :voteItemId
     """
     )
-    fun findByIdOptimisticLock(voteItemId: Long?): VoteItem?
+    fun findByIdOptimisticLock(voteItemId: Long): VoteItem?
 
-    fun findByVotePostId(votePostId: Long?): List<VoteItem?>
+    fun findByVotePostId(votePostId: Long): List<VoteItem>
 }
