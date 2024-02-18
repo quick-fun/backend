@@ -14,7 +14,7 @@ class CommentCommandServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        commentCommandService = new CommentCommandService(commentCommandRepository);
+        commentCommandService = new CommentCommandService(commentCommandRepository, eventPublisher);
     }
 
     @DisplayName("[SUCCESS] 댓글 생성에 성공한다.")

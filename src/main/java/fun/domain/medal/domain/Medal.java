@@ -57,6 +57,6 @@ public class Medal {
         return "Medal{" +
                "id=" + id +
                ", medalType=" + medalType +
-               '}';
+               "}";
     }
 }

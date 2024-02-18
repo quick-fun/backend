@@ -108,6 +108,7 @@ class VoteItemCommandServiceConcurrencyTest extends ServiceTestConfig {
                 )
         );
         expectedMember.addMedal(expectedMedal.getId());
+        memberCommandRepository.saveAndFlush(expectedMember);
 
         final VoteLabel expectedVoteLabel = voteLabelCommandRepository.save(
                 new VoteLabel(
@@ -137,14 +138,16 @@ class VoteItemCommandServiceConcurrencyTest extends ServiceTestConfig {
         expectedVotePost.addVoteItems(voteItems);
         votePostCommandRepository.flush();
 
-        // when
-        voteItemCommandService.voteVoteItem(
-                expectedMember.getId(),
-                expectedVotePost.getId(),
-                voteItem.getId()
-        );
+        for (final VoteItem item : expectedVotePost.getVoteItems()) {
+            voteItemCommandService.voteVoteItem(
+                    expectedMember.getId(),
+                    item.getVotePostId(),
+                    item.getId()
+            );
+        }
 
-        // then
+
+        // expect
         assertThatThrownBy(() ->
                 voteItemCommandService.voteVoteItem(
                         expectedMember.getId(),

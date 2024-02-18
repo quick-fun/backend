@@ -34,7 +34,7 @@ class AuthCommandControllerTest extends ControllerTestConfig {
     @Test
     void success_createMemberAndReturnToken() throws Exception {
         // when
-        mockingAuthAccessToken(new AuthAccessToken(1L));
+        mockingAuthAccessToken(new AuthAccessToken(1L, null));
         when(
                 authCommandService.createTokens(
                         any(AuthSocialType.class),

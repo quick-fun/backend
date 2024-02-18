@@ -28,13 +28,25 @@ public class VoteItemMember {
             final Long memberId,
             final Long voteItemId
     ) {
+        this(null, memberId, voteItemId);
+    }
+
+    private VoteItemMember(
+            final Long id,
+            final Long memberId,
+            final Long voteItemId
+    ) {
+        this.id = id;
         this.memberId = memberId;
         this.voteItemId = voteItemId;
     }
 
-    public VoteItemMember(final Long id, final Long memberId, final Long voteItemId) {
-        this.id = id;
-        this.memberId = memberId;
-        this.voteItemId = voteItemId;
+    @Override
+    public String toString() {
+        return "VoteItemMember{" +
+               "id=" + id +
+               ", memberId=" + memberId +
+               ", voteItemId=" + voteItemId +
+               '}';
     }
 }

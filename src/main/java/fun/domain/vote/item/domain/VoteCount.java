@@ -55,6 +55,6 @@ public class VoteCount {
     public String toString() {
         return "VoteCount{" +
                "value=" + value +
-               '}';
+               "}";
     }
 }

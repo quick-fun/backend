@@ -95,7 +95,7 @@ class VotePostCommandServiceTest extends ServiceTestConfig {
         );
 
         // when
-        final AuthAccessToken wrongAuthAccessToken = new AuthAccessToken(0L);
+        final AuthAccessToken wrongAuthAccessToken = new AuthAccessToken(0L, 0L);
         final CreateVotePostRequest createVotePostRequest = new CreateVotePostRequest(
                 "투표 게시글 제목",
                 "투표 게시글 내용",

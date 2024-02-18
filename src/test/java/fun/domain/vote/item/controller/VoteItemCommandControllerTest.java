@@ -4,6 +4,7 @@ import fun.common.auth.AuthAccessToken;
 import fun.testconfig.ControllerTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Configuration;
 
 import static fun.ApiUrl.POST_VOTE_VOTE_ITEM;
 import static fun.common.auth.AuthAccessToken.AUTHORIZATION_ACCESS_TOKEN;
@@ -17,13 +18,14 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Configuration
 class VoteItemCommandControllerTest extends ControllerTestConfig {
 
     @DisplayName("[SUCCESS] 투표 항목에 투표한다.")
     @Test
     void success_voteVoteItem() throws Exception {
         // when
-        mockingAuthAccessToken(new AuthAccessToken(1L));
+        mockingAuthAccessToken(new AuthAccessToken(1L, null));
         when(
                 voteItemCommandService.voteVoteItem(
                         anyLong(),

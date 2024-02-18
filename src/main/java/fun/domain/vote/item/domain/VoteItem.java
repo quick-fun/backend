@@ -10,13 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Version;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Getter
 @Entity
 public class VoteItem {
 
@@ -33,8 +31,11 @@ public class VoteItem {
     @JoinColumn(name = "vote_post_id", nullable = false)
     private Long votePostId;
 
-    @OneToMany(mappedBy = "voteItemId", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "voteItemId", cascade = CascadeType.PERSIST)
     private List<VoteItemMember> voteItemMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "voteItemId", cascade = CascadeType.PERSIST)
+    private List<VoteItemAnonymousMember> voteItemAnonymousMembers = new ArrayList<>();
 
     @Version
     private Long version;
@@ -80,12 +81,50 @@ public class VoteItem {
             final VoteItemVoteValidator voteItemVoteValidator
     ) {
         voteItemVoteValidator.validate(memberId, votePostId);
-        this.voteItemMembers.add(new VoteItemMember(memberId, votePostId));
+        this.voteItemMembers.add(new VoteItemMember(memberId, this.id));
         this.voteCount = voteCount.increase();
     }
 
     boolean checkMemberVotedBefore(final Long memberId) {
         return voteItemMembers.contains(memberId);
+    }
+
+    public void voteByAnonymousMember(
+            final Long anonymousMemberId,
+            final Long votePostId,
+            final VoteItemVoteValidator voteItemVoteValidator
+    ) {
+        voteItemVoteValidator.validateAnonymous(anonymousMemberId, votePostId);
+        this.voteItemAnonymousMembers.add(new VoteItemAnonymousMember(null, anonymousMemberId, votePostId));
+        this.voteCount = voteCount.increase();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public VoteCount getVoteCount() {
+        return voteCount;
+    }
+
+    public Long getVotePostId() {
+        return votePostId;
+    }
+
+    public List<VoteItemMember> getVoteItemMembers() {
+        return voteItemMembers;
+    }
+
+    public List<VoteItemAnonymousMember> getVoteItemAnonymousMembers() {
+        return voteItemAnonymousMembers;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 
     @Override
@@ -110,6 +149,6 @@ public class VoteItem {
                ", votePostId=" + votePostId +
                ", voteItemMembers=" + voteItemMembers +
                ", version=" + version +
-               '}';
+               "}";
     }
 }
