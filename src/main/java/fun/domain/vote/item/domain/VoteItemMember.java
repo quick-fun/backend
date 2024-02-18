@@ -41,6 +41,10 @@ public class VoteItemMember {
         this.voteItemId = voteItemId;
     }
 
+    public boolean isSameMember(final Long requestMemberId) {
+        return this.memberId == requestMemberId;
+    }
+
     @Override
     public String toString() {
         return "VoteItemMember{" +

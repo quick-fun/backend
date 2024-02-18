@@ -6,14 +6,25 @@ import fun.domain.vote.query.support.VoteItemRateSupport;
 public record VoteItemResponse(
         Long voteItemId,
         String voteItemTitle,
-        Integer voteRate
+        Integer voteRate,
+        boolean visible
 ) {
 
-    public static VoteItemResponse from(final VoteItem voteItem, final VoteItemRateSupport voteItemRateSupport) {
+    public static VoteItemResponse createVisibleRate(final VoteItem voteItem, final VoteItemRateSupport voteItemRateSupport) {
         return new VoteItemResponse(
                 voteItem.getId(),
                 voteItem.getContent(),
-        voteItemRateSupport.getRate(voteItem)
+                voteItemRateSupport.getRate(voteItem),
+                true
+        );
+    }
+
+    public static VoteItemResponse createInvisibleRate(final VoteItem voteItem) {
+        return new VoteItemResponse(
+                voteItem.getId(),
+                voteItem.getContent(),
+                0,
+                false
         );
     }
 }

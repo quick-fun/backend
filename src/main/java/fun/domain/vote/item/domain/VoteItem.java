@@ -85,10 +85,6 @@ public class VoteItem {
         this.voteCount = voteCount.increase();
     }
 
-    boolean checkMemberVotedBefore(final Long memberId) {
-        return voteItemMembers.contains(memberId);
-    }
-
     public void voteByAnonymousMember(
             final Long anonymousMemberId,
             final Long votePostId,
@@ -97,6 +93,16 @@ public class VoteItem {
         voteItemVoteValidator.validateAnonymous(anonymousMemberId, votePostId);
         this.voteItemAnonymousMembers.add(new VoteItemAnonymousMember(null, anonymousMemberId, votePostId));
         this.voteCount = voteCount.increase();
+    }
+
+    public boolean checkMemberVotedBefore(final Long memberId) {
+        return voteItemMembers.stream()
+                .anyMatch(it -> it.isSameMember(memberId));
+    }
+
+    public boolean checkAnonymousMemberVotedBefore(final Long anonymousMemberId) {
+        return voteItemAnonymousMembers.stream()
+                .anyMatch(it -> it.isSameAnonymousMember(anonymousMemberId));
     }
 
     public Long getId() {

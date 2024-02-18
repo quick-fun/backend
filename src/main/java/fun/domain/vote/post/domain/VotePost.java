@@ -121,6 +121,10 @@ public class VotePost extends BaseEntity {
         this.voteLabelIds.add(requestVoteLabelId);
     }
 
+    public boolean checkVotedBeforeForMember(final Long requestMemberId) {
+        return this.voteItems.stream().anyMatch(voteItem -> voteItem.checkMemberVotedBefore(requestMemberId));
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
