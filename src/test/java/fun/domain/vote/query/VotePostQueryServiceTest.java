@@ -16,7 +16,7 @@
 //import fun.domain.vote.query.response.VoteLabelResponse;
 //import fun.domain.vote.query.response.VotePostDetailResponse;
 //import fun.domain.vote.query.response.VotePostPageResponse;
-//import fun.domain.vote.query.support.VoteItemRateSupport;
+//import fun.domain.vote.util.VoteItemRateSupport;
 //import fun.testconfig.ServiceTestConfig;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;

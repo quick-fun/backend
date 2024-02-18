@@ -1,4 +1,4 @@
-package fun.domain.vote.query.support;
+package fun.domain.vote.support;
 
 import fun.domain.vote.item.domain.VoteCount;
 import fun.domain.vote.item.domain.VoteItem;
